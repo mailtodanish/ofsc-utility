@@ -1,4 +1,4 @@
-# Enhanced String Utils
+# Enhanced ofsc utility
 
 A comprehensive TypeScript oracle field service utility library with 40+ methods.
 
