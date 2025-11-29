@@ -1,6 +1,6 @@
 # Enhanced ofsc utility
 
-A comprehensive TypeScript oracle field service utility library with 40+ methods.
+A comprehensive oracle field service utility library with 40+ methods.
 
 ## Features
 
