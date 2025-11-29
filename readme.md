@@ -33,6 +33,15 @@ ofs.getOAuthToken("clientId", "clientSecret", "instanceId")
   });
 ```
 
+
+``` js
+const ofs = require('ofsc-utility');
+
+ofs.WorkZone.downloadWorkZoneCSV("clientId", "clientSecret", "instanceId").then((token) => {
+    console.log(token);
+});
+```
+
 ## License
 
 MIT
