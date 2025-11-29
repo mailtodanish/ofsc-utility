@@ -12,3 +12,10 @@ export interface WorkZoneResponse {
   offset: number;
   totalResults: number;
 }
+
+export interface ResourceResponse {
+  items: any[];
+  offset: number;
+  limit: number;
+  totalResults: number;
+}

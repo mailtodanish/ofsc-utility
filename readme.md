@@ -21,7 +21,9 @@ npm install ofsc-utility
 
 ### Download
     downloadWorkZoneCSV(clientId, clientSecret, instanceId)
+    downloadAllResourcesCSV(clientId, clientSecret, instanceId)
     getOAuthToken(clientId, clientSecret, instanceId)
+    
 
 ## Usage
 
@@ -44,6 +46,14 @@ ofs.getOAuthToken("clientId", "clientSecret", "instanceId")
 const ofs = require('ofsc-utility');
 
 ofs.WorkZone.downloadWorkZoneCSV("clientId", "clientSecret", "instanceId").then((token) => {
+    console.log(token);
+});
+```
+
+``` js
+const ofs = require('ofsc-utility');
+
+ofs.downloadAllResourcesCSV("clientId", "clientSecret", "instanceId").then((token) => {
     console.log(token);
 });
 ```

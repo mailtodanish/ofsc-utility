@@ -1,6 +1,6 @@
 {
   "name": "ofsc-utility",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A wrapper for Oracle Field Service REST API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

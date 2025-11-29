@@ -1,6 +1,7 @@
 
 // Export all methods grouped by category
 export * as OauthTokenService from './oauthTokenService';
+export * as Resource from './resources';
 export * as WorkZone from './workZones';
 // Export types
 export * from './types';
@@ -14,6 +15,9 @@ export {
   downloadWorkZoneCSV
 } from './workZones';
 
+export {
+  downloadAllResourcesCSV
+} from './resources';
 
 
 // Default export with all functionality
@@ -21,6 +25,7 @@ const OfscUtility = {
   // Case converters
   getOAuthToken: require('./oauthTokenService').getOAuthToken,
   downloadWorkZoneCSV: require('./workZones').downloadWorkZoneCSV,
+  downloadAllResourcesCSV: require('./resources').downloadAllResourcesCSV
 
 };
 
