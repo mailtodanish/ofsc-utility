@@ -33,16 +33,8 @@ ofs.getOAuthToken("clientId", "clientSecret", "instanceId")
   });
 ```
 
-## Function: getOAuthToken
+## License
 
-Returns an OAuth token using OFSC client credentials.
-
-### **Parameters**
-
-  Name               Type     Description
-  ------------------ -------- ----------------------------------------
-  **clientId**       string   Your OFSC OAuth client ID
-  **clientSecret**   string   Your OFSC OAuth client secret
-  **instanceId**     string   Your OFSC OFSC instance/environment ID
+MIT
 
 
