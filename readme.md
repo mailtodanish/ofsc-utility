@@ -17,6 +17,11 @@ A lightweight utility library for interacting with **Oracle Field Service Cloud 
 npm install ofsc-utility
 ```
 
+## Functions implemented
+
+### Download
+    downloadWorkZoneCSV(clientId, clientSecret, instanceId)
+
 ## Usage
 
 ### CommonJS
