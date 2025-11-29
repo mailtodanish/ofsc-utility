@@ -11,10 +11,10 @@ export {
 
 
 // Default export with all functionality
-const StringUtils = {
+const OfscUtility = {
   // Case converters
   getOAuthToken: require('./oauthTokenService').getOAuthToken,
   
 };
 
-export default StringUtils;
+export default OfscUtility;

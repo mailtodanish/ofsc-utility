@@ -1,6 +1,6 @@
 # Enhanced ofsc utility
 
-A comprehensive oracle field service utility library with 40+ methods.
+A lightweight utility library for interacting with **Oracle Field Service Cloud (OFSC)**.
 
 ## Features
 
@@ -13,6 +13,30 @@ A comprehensive oracle field service utility library with 40+ methods.
 
 ## Installation
 
-```bash
+``` bash
 npm install ofsc-utility
 ```
+
+## Usage
+
+### CommonJS
+
+``` js
+const ofs = require('ofsc-utility');
+
+ofs.getOAuthToken("clientId", "clientSecret", "instanceId")
+  .then((token) => {
+      console.log(token);
+  })
+  .catch((err) => {
+      console.error("Error fetching token:", err);
+  });
+```
+
+## Parameters
+
+  Parameter      Type     Description
+  -------------- -------- ------------------------------
+  clientId       string   OFSC OAuth client ID
+  clientSecret   string   OFSC OAuth client secret
+  instanceId     string   OFSC environment/instance ID

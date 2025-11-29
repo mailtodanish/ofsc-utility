@@ -1,6 +1,6 @@
 {
   "name": "ofsc-utility",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A wrapper for Oracle Field Service REST API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -26,7 +26,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/enhanced-string-utils"
+    "url": "https://github.com/mailtodanish/ofsc-utility"
   },
   "devDependencies": {
     "typescript": "^5.0.0",

@@ -1,6 +1,6 @@
 export async function getOAuthToken(clientId: string, clientSecret: string, instanceUrl: string): Promise<any> {
     const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/oauthTokenService/v2/token`;
-    const credentials = btoa(`${clientId}:${clientSecret}`);
+    const credentials = btoa(`${clientId}@${instanceUrl}:${clientSecret}`);
     const headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Authorization': `Basic ${credentials}`
