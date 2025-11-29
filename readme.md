@@ -21,6 +21,7 @@ npm install ofsc-utility
 
 ### Download
     downloadWorkZoneCSV(clientId, clientSecret, instanceId)
+    getOAuthToken(clientId, clientSecret, instanceId)
 
 ## Usage
 
