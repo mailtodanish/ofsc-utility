@@ -6,3 +6,4 @@ jest.config.js
 .coverage
 *.test.ts
 *.spec.ts
+*.ts

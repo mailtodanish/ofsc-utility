@@ -1,11 +1,11 @@
 {
   "name": "ofsc-utility",
-  "version": "1.0.4",
+  "version": "1.0.8",
   "description": "A wrapper for Oracle Field Service REST API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm link",
     "prepublishOnly": "npm run build",
     "test": "jest",
     "test:watch": "jest --watch",

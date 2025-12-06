@@ -1,5 +1,7 @@
 
 // Export all methods grouped by category
+export * as Activity from './activities';
+export * as InventoryType from './inventoryTypes';
 export * as OauthTokenService from './oauthTokenService';
 export * as Resource from './resources';
 export * as User from './users';
@@ -24,6 +26,13 @@ export {
   downloadAllUsersCSV
 } from './users';
 
+export {
+  downloadAllInventoryTypesCSV, getInventoryTypesDetail, updateCreateInventoryType
+} from './inventoryTypes';
+
+export {
+  getAllActivities
+} from './activities';
 
 
 // Default export with all functionality
@@ -32,7 +41,11 @@ const OfscUtility = {
   getOAuthToken: require('./oauthTokenService').getOAuthToken,
   downloadWorkZoneCSV: require('./workZones').downloadWorkZoneCSV,
   downloadAllResourcesCSV: require('./resources').downloadAllResourcesCSV,
-  downloadAllUsersCSV: require('./resources').downloadAllUsersCSV
+  downloadAllUsersCSV: require('./resources').downloadAllUsersCSV,
+  downloadAllInventoryTypesCSV: require('./inventoryTypes').downloadAllInventoryTypesCSV,
+  getInventoryTypesDetail: require('./inventoryTypes').getInventoryTypesDetail,
+  updateInventoryType: require('./inventoryTypes').updateInventoryType,
+  getAllActivities: require('./activities').getAllActivities
 
 };
 

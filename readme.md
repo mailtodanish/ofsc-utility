@@ -21,16 +21,42 @@ npm install ofsc-utility
 
 ### Download
 
+  Please see the code snippet below.
+
+  #### csv
+
     downloadWorkZoneCSV("clientId", "clientSecret", "instanceId")
     downloadAllResourcesCSV("clientId", "clientSecret", "instanceId")
     downloadAllUsersCSV("clientId", "clientSecret", "instanceId")
+    downloadAllInventoryTypesCSV("clientId", "clientSecret", "instanceId")
+    
+  
+  #### records
+
     getOAuthToken("clientId", "clientSecret", "instanceId")
+    getInventoryTypesDetail("clientId", "clientSecret", "instanceId"."inventory_label")
+    updateCreateInventoryType("clientId", "clientSecret", "instanceId"."inventory_label")
+    getAllActivities("clientId", "clientSecret", "instanceId"."resources","dateFrom","dateTo","q","fields")
+
+    
 
 ## Usage
 
   downloadWorkZoneCSV("bot", "XXXXXXXXX", "compXXX.test")
 
 ### CommonJS
+
+```js
+
+async function  run (){
+let data = await ofs.InventoryType.getInventoryTypesDetail(
+    "clientId", "clientSecret", "instanceId", "inventory_label");
+console.error(data);
+}
+run();
+
+
+```
 
 ```js
 const ofs = require("ofsc-utility");
@@ -81,6 +107,71 @@ ofs
   .catch((err) => {
     console.error("Error:", err);
   });
+```
+
+```js
+const ofs = require('ofsc-utility');
+
+async function run() {
+    const payload = {
+        label: "inventory_label",
+        name: "Ordered Part",
+        unitOfMeasurement: "ea",
+        active: true,
+        nonSerialized: true,
+        modelProperty: "part_item_number_rev",
+        quantityPrecision: 0,
+        translations: [
+            {
+                language: "en",
+                name: "Ordered Part",
+                unitOfMeasurement: "ea",
+                languageISO: "en-US"
+            }
+        ]
+    };
+
+    try {
+        const result = await updateCreateInventoryType(
+            "CLIENT_ID",
+            "CLIENT_SECRET",
+            "INSTANCE_URL",
+            "inventory_label",
+            payload
+        );
+
+        console.log("Updated:", result);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+run();
+
+```
+
+```js
+const ofs = require("ofsc-utility");
+async function run() {
+  try {
+    const result = await ofs.getAllActivities(
+      (clientId = "CLIENT_ID"),
+      (clientSecret = "CLIENT_SECRET"),
+      (instanceUrl = "INSTANCE_URL"),
+      (resources = "US"),
+      (dateFrom = "2025-11-05"),
+      (dateTo = "2025-12-05"),
+      (q = "status=='pending' and ACTIVITY_NOTES!=''"),
+      (fields = "ACTIVITY_NOTES,status,activityId,activityType,date,resourceId")
+    );
+
+    console.log("Updated:", result);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+run();
 ```
 
 ## License
