@@ -21,41 +21,36 @@ npm install ofsc-utility
 
 ### Download
 
-  Please see the code snippet below.
+Please see the code snippet below.
 
-  #### csv
+#### csv
 
     downloadWorkZoneCSV("clientId", "clientSecret", "instanceId")
     downloadAllResourcesCSV("clientId", "clientSecret", "instanceId")
     downloadAllUsersCSV("clientId", "clientSecret", "instanceId")
     downloadAllInventoryTypesCSV("clientId", "clientSecret", "instanceId")
-    
-  
-  #### records
+
+#### records
 
     getOAuthToken("clientId", "clientSecret", "instanceId")
     getInventoryTypesDetail("clientId", "clientSecret", "instanceId"."inventory_label")
     updateCreateInventoryType("clientId", "clientSecret", "instanceId"."inventory_label")
     getAllActivities("clientId", "clientSecret", "instanceId"."resources","dateFrom","dateTo","q","fields")
-
-    
+    getActivityCustomerInventories("clientId", "clientSecret", "instanceId"."activityId")
+    createActivityCustomerInventories( "clientId", "clientSecret", "instanceId"."activityId","payload")
 
 ## Usage
 
-  downloadWorkZoneCSV("bot", "XXXXXXXXX", "compXXX.test")
+downloadWorkZoneCSV("bot", "XXXXXXXXX", "compXXX.test")
 
 ### CommonJS
 
 ```js
-
-async function  run (){
-let data = await ofs.InventoryType.getInventoryTypesDetail(
-    "clientId", "clientSecret", "instanceId", "inventory_label");
-console.error(data);
+async function run() {
+  let data = await ofs.InventoryType.getInventoryTypesDetail("clientId", "clientSecret", "instanceId", "inventory_label");
+  console.error(data);
 }
 run();
-
-
 ```
 
 ```js
@@ -110,44 +105,37 @@ ofs
 ```
 
 ```js
-const ofs = require('ofsc-utility');
+const ofs = require("ofsc-utility");
 
 async function run() {
-    const payload = {
-        label: "inventory_label",
+  const payload = {
+    label: "inventory_label",
+    name: "Ordered Part",
+    unitOfMeasurement: "ea",
+    active: true,
+    nonSerialized: true,
+    modelProperty: "part_item_number_rev",
+    quantityPrecision: 0,
+    translations: [
+      {
+        language: "en",
         name: "Ordered Part",
         unitOfMeasurement: "ea",
-        active: true,
-        nonSerialized: true,
-        modelProperty: "part_item_number_rev",
-        quantityPrecision: 0,
-        translations: [
-            {
-                language: "en",
-                name: "Ordered Part",
-                unitOfMeasurement: "ea",
-                languageISO: "en-US"
-            }
-        ]
-    };
+        languageISO: "en-US",
+      },
+    ],
+  };
 
-    try {
-        const result = await updateCreateInventoryType(
-            "CLIENT_ID",
-            "CLIENT_SECRET",
-            "INSTANCE_URL",
-            "inventory_label",
-            payload
-        );
+  try {
+    const result = await updateCreateInventoryType("CLIENT_ID", "CLIENT_SECRET", "INSTANCE_URL", "inventory_label", payload);
 
-        console.log("Updated:", result);
-    } catch (err) {
-        console.error(err);
-    }
+    console.log("Updated:", result);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 run();
-
 ```
 
 ```js
@@ -172,6 +160,12 @@ async function run() {
 }
 
 run();
+```
+
+```js
+ofs.getActivityCustomerInventories("CLIENT_ID", "CLIENT_SECRET", "INSTANCE_URL", "activityId").then((data) => {
+  console.log(data);
+});
 ```
 
 ## License

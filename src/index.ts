@@ -1,10 +1,12 @@
 
 // Export all methods grouped by category
 export * as Activity from './activities';
+export * as ActivityInventories from './activityInventories';
 export * as InventoryType from './inventoryTypes';
 export * as OauthTokenService from './oauthTokenService';
 export * as Resource from './resources';
 export * as User from './users';
+export * as CSV from './utilities';
 export * as WorkZone from './workZones';
 // Export types
 export * from './types';
@@ -34,10 +36,11 @@ export {
   getAllActivities
 } from './activities';
 
+export { createActivityCustomerInventories, getActivityCustomerInventories } from './activityInventories';
+
 
 // Default export with all functionality
 const OfscUtility = {
-  // Case converters
   getOAuthToken: require('./oauthTokenService').getOAuthToken,
   downloadWorkZoneCSV: require('./workZones').downloadWorkZoneCSV,
   downloadAllResourcesCSV: require('./resources').downloadAllResourcesCSV,
@@ -45,7 +48,9 @@ const OfscUtility = {
   downloadAllInventoryTypesCSV: require('./inventoryTypes').downloadAllInventoryTypesCSV,
   getInventoryTypesDetail: require('./inventoryTypes').getInventoryTypesDetail,
   updateInventoryType: require('./inventoryTypes').updateInventoryType,
-  getAllActivities: require('./activities').getAllActivities
+  getAllActivities: require('./activities').getAllActivities,
+  getActivityCustomerInventories: require('./activityInventories').getActivityCustomerInventories,
+  createActivityCustomerInventories: require('./activityInventories').createActivityCustomerInventories
 
 };
 
