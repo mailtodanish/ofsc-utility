@@ -7,3 +7,4 @@ coverage/
 *.log
 .env
 .nyc_output
+random.txt

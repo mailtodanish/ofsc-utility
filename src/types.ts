@@ -28,19 +28,26 @@ export interface Response {
 }
 
 export interface InventoryTranslation {
-    language: string;
-    name: string;
-    unitOfMeasurement: string;
-    languageISO: string;
+  language: string;
+  name: string;
+  unitOfMeasurement: string;
+  languageISO: string;
 }
 
 export interface InventoryTypePayload {
-    label: string;
-    name: string;
-    unitOfMeasurement: string;
-    active: boolean;
-    nonSerialized: boolean;
-    modelProperty: string;
-    quantityPrecision: number;
-    translations: InventoryTranslation[];
+  label: string;
+  name: string;
+  unitOfMeasurement: string;
+  active: boolean;
+  nonSerialized: boolean;
+  modelProperty: string;
+  quantityPrecision: number;
+  translations: InventoryTranslation[];
+}
+
+
+export interface EventResponse {
+  found?: boolean;
+  nextPage?: string;
+  items?: any[];
 }

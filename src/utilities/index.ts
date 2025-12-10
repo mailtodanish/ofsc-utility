@@ -92,6 +92,9 @@ export function saveCsv<T extends Record<string, any>>(
 // Escape CSV fields
 function escapeCsvValue(value: any): string {
     if (value == null) return "";
+    if (typeof value === "object") {
+        value = JSON.stringify(value);
+    }
     const str = String(value);
 
     // Wrap in quotes if needed

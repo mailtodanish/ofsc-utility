@@ -7,3 +7,4 @@ jest.config.js
 *.test.ts
 *.spec.ts
 *.ts
+random.txt

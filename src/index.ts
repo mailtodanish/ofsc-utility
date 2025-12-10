@@ -2,6 +2,7 @@
 // Export all methods grouped by category
 export * as Activity from './activities';
 export * as ActivityInventories from './activityInventories';
+export * as Events from './events';
 export * as InventoryType from './inventoryTypes';
 export * as OauthTokenService from './oauthTokenService';
 export * as Resource from './resources';
@@ -38,6 +39,8 @@ export {
 
 export { createActivityCustomerInventories, getActivityCustomerInventories } from './activityInventories';
 
+export { downloadAllEventsOfDay, downloadAllEventsOfDayCSV } from './events';
+
 
 // Default export with all functionality
 const OfscUtility = {
@@ -50,7 +53,9 @@ const OfscUtility = {
   updateInventoryType: require('./inventoryTypes').updateInventoryType,
   getAllActivities: require('./activities').getAllActivities,
   getActivityCustomerInventories: require('./activityInventories').getActivityCustomerInventories,
-  createActivityCustomerInventories: require('./activityInventories').createActivityCustomerInventories
+  createActivityCustomerInventories: require('./activityInventories').createActivityCustomerInventories,
+  downloadAllEventsOfDayCSV: require('./events').downloadAllEventsOfDayCSV,
+  downloadAllEventsOfDay: require('./events').downloadAllEventsOfDay
 
 };
 

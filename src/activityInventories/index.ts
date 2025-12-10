@@ -22,9 +22,9 @@ export async function getActivityCustomerInventories(
     let offset = 0;
     let token = await getOAuthToken(clientId, clientSecret, instanceUrl);
 
-    const allItems: any[] = [];   
+    const allItems: any[] = [];
 
-    const  fetchCustomerInventories = async (offset: number) => {
+    const fetchCustomerInventories = async (offset: number) => {
         const params = new URLSearchParams({
             offset: offset.toString(),
             limit: limit.toString()
@@ -46,7 +46,7 @@ export async function getActivityCustomerInventories(
 
         allItems.push(...data.items);
         console.log(`   ✔ Received ${data.items.length} items (Total: ${allItems.length}) for activity ${activityId}`);
-        
+
         await fetchCustomerInventories(offset + limit);
     };
 
@@ -88,9 +88,10 @@ export async function createActivityCustomerInventories(
         body: JSON.stringify(payload)
     });
 
-    if (!res.ok) {
-        throw new Error(`❌ POST failed: ${res.status} ${res.statusText}`);
-    }
+    // if (!res.ok) {
+    //     return await res.json();
+    //     throw new Error(`❌ POST failed: ${res.status} ${res.statusText}`);
+    // }
 
     return await res.json() as {};
 }

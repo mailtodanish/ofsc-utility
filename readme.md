@@ -25,10 +25,11 @@ Please see the code snippet below.
 
 #### csv
 
-    downloadWorkZoneCSV("clientId", "clientSecret", "instanceId")
-    downloadAllResourcesCSV("clientId", "clientSecret", "instanceId")
-    downloadAllUsersCSV("clientId", "clientSecret", "instanceId")
-    downloadAllInventoryTypesCSV("clientId", "clientSecret", "instanceId")
+    downloadWorkZoneCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId)
+    downloadAllResourcesCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId)
+    downloadAllUsersCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId)
+    downloadAllInventoryTypesCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId)
+    downloadAllEventsOfDayCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId, process.env.subscriptionId,"2025-12-05")
 
 #### records
 
@@ -38,6 +39,7 @@ Please see the code snippet below.
     getAllActivities("clientId", "clientSecret", "instanceId"."resources","dateFrom","dateTo","q","fields")
     getActivityCustomerInventories("clientId", "clientSecret", "instanceId"."activityId")
     createActivityCustomerInventories( "clientId", "clientSecret", "instanceId"."activityId","payload")
+    downloadAllEventsOfDay(process.env.clientID, process.env.clientSecreat, process.env.instanceId, process.env.subscriptionId,"2025-12-05")
 
 ## Usage
 
@@ -166,6 +168,17 @@ run();
 ofs.getActivityCustomerInventories("CLIENT_ID", "CLIENT_SECRET", "INSTANCE_URL", "activityId").then((data) => {
   console.log(data);
 });
+```
+
+```js
+const ofs = require("ofsc-utility");
+ofs.Events.downloadAllEventsOfDayCSV(
+  process.env.clientID,
+  process.env.clientSecreat,
+  process.env.instanceId,
+  process.env.subscriptionId,
+  "2025-12-05"
+);
 ```
 
 ## License
