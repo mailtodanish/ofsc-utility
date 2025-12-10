@@ -102,3 +102,16 @@ export async function downloadAllUsersCSV(
   console.log(`🧩 Date Time: ${new Date()}`);
   console.log("-------------------------------------");
 }
+
+
+export {
+  generateUsersCollaborationCSV
+} from './collaborationGroups';
+
+
+const OfscUserUtility = {
+  generateUsersCollaborationCSV: require('./collaborationGroups').generateUsersCollaborationCSV,  
+  downloadAllUsersCSV
+};
+
+export default OfscUserUtility;

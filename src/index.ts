@@ -26,7 +26,7 @@ export {
 } from './resources';
 
 export {
-  downloadAllUsersCSV
+  downloadAllUsersCSV, generateUsersCollaborationCSV
 } from './users';
 
 export {
@@ -55,7 +55,8 @@ const OfscUtility = {
   getActivityCustomerInventories: require('./activityInventories').getActivityCustomerInventories,
   createActivityCustomerInventories: require('./activityInventories').createActivityCustomerInventories,
   downloadAllEventsOfDayCSV: require('./events').downloadAllEventsOfDayCSV,
-  downloadAllEventsOfDay: require('./events').downloadAllEventsOfDay
+  downloadAllEventsOfDay: require('./events').downloadAllEventsOfDay,
+  generateUsersCollaborationCSV: require('./users').generateUsersCollaborationCSV
 
 };
 

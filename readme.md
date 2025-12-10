@@ -30,6 +30,7 @@ Please see the code snippet below.
     downloadAllUsersCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId)
     downloadAllInventoryTypesCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId)
     downloadAllEventsOfDayCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId, process.env.subscriptionId,"2025-12-05")
+    generateUsersCollaborationCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId) // all Collaboration groups of a user
 
 #### records
 
@@ -46,6 +47,17 @@ Please see the code snippet below.
 downloadWorkZoneCSV("bot", "XXXXXXXXX", "compXXX.test")
 
 ### CommonJS
+
+```js
+const ofs = require("ofsc-utility");
+
+ofs.User.generateUsersCollaborationCSV(
+    process.env.clientID,
+    process.env.clientSecreat,
+    process.env.instanceId,
+    process.env.subscriptionId
+);
+```
 
 ```js
 async function run() {
