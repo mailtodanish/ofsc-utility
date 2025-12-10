@@ -25,12 +25,13 @@ Please see the code snippet below.
 
 #### csv
 
-    downloadWorkZoneCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId)
-    downloadAllResourcesCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId)
-    downloadAllUsersCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId)
-    downloadAllInventoryTypesCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId)
-    downloadAllEventsOfDayCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId, process.env.subscriptionId,"2025-12-05")
-    generateUsersCollaborationCSV(process.env.clientID, process.env.clientSecreat, process.env.instanceId) // all Collaboration groups of a user
+    downloadWorkZoneCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId)
+    downloadAllResourcesCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId)
+    downloadAllUsersCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId)
+    downloadAllInventoryTypesCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId)
+    downloadAllEventsOfDayCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId, process.env.subscriptionId,"2025-12-05")
+    // all Collaboration groups of all users
+    generateUsersCollaborationCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId) 
 
 #### records
 
@@ -40,7 +41,7 @@ Please see the code snippet below.
     getAllActivities("clientId", "clientSecret", "instanceId"."resources","dateFrom","dateTo","q","fields")
     getActivityCustomerInventories("clientId", "clientSecret", "instanceId"."activityId")
     createActivityCustomerInventories( "clientId", "clientSecret", "instanceId"."activityId","payload")
-    downloadAllEventsOfDay(process.env.clientID, process.env.clientSecreat, process.env.instanceId, process.env.subscriptionId,"2025-12-05")
+    downloadAllEventsOfDay(process.env.clientID, process.env.clientSecret, process.env.instanceId, process.env.subscriptionId,"2025-12-05")
 
 ## Usage
 
@@ -53,7 +54,7 @@ const ofs = require("ofsc-utility");
 
 ofs.User.generateUsersCollaborationCSV(
     process.env.clientID,
-    process.env.clientSecreat,
+    process.env.clientSecret,
     process.env.instanceId,
     process.env.subscriptionId
 );
@@ -186,7 +187,7 @@ ofs.getActivityCustomerInventories("CLIENT_ID", "CLIENT_SECRET", "INSTANCE_URL",
 const ofs = require("ofsc-utility");
 ofs.Events.downloadAllEventsOfDayCSV(
   process.env.clientID,
-  process.env.clientSecreat,
+  process.env.clientSecret,
   process.env.instanceId,
   process.env.subscriptionId,
   "2025-12-05"
