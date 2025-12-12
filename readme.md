@@ -30,8 +30,10 @@ Please see the code snippet below.
     downloadAllUsersCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId)
     downloadAllInventoryTypesCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId)
     downloadAllEventsOfDayCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId, process.env.subscriptionId,"2025-12-05")
-    // all Collaboration groups of all users
+    // Download Collaboration groups  assigned to users
     generateUsersCollaborationCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId) 
+    // Download all resource's inventories
+    generateAllOnHandInventoryOfAllResourcesCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId) 
 
 #### records
 

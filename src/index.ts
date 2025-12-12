@@ -3,6 +3,7 @@
 export * as Activity from './activities';
 export * as ActivityInventories from './activityInventories';
 export * as Events from './events';
+export * as Inventory from './inventory';
 export * as InventoryType from './inventoryTypes';
 export * as OauthTokenService from './oauthTokenService';
 export * as Resource from './resources';
@@ -12,7 +13,9 @@ export * as WorkZone from './workZones';
 // Export types
 export * from './types';
 
-// Export individual popular methods for convenience
+export {
+  generateAllOnHandInventoryOfAllResourcesCSV
+} from './inventory';
 export {
   getOAuthToken
 } from './oauthTokenService';
@@ -56,7 +59,8 @@ const OfscUtility = {
   createActivityCustomerInventories: require('./activityInventories').createActivityCustomerInventories,
   downloadAllEventsOfDayCSV: require('./events').downloadAllEventsOfDayCSV,
   downloadAllEventsOfDay: require('./events').downloadAllEventsOfDay,
-  generateUsersCollaborationCSV: require('./users').generateUsersCollaborationCSV
+  generateUsersCollaborationCSV: require('./users').generateUsersCollaborationCSV,
+  generateAllOnHandInventoryOfAllResourcesCSV: require('./inventory').generateAllOnHandInventoryOfAllResourcesCSV
 
 };
 

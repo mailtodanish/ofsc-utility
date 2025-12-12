@@ -30,6 +30,8 @@ export function flattenObject(
   return result;
 }
 
+
+
 async function fetchEventsPage(
     url: string,
     token: string,
@@ -45,12 +47,28 @@ async function fetchEventsPage(
     };
 }
 
+function getNextDay(dateString: string): string {
+  // Parse manually to avoid timezone issues
+  const [year, month, day] = dateString.split('-').map(Number);
+
+  const date = new Date(year, month - 1, day);
+  date.setDate(date.getDate() + 1);
+
+  const pad = (n: number) => n.toString().padStart(2, '0');
+
+  const y = date.getFullYear();
+  const m = pad(date.getMonth() + 1);
+  const d = pad(date.getDate());
+
+  return `${y}-${m}-${d}`;
+}
+
 function processEventItems(items: any[], sinceDate: string, output: any[]) {
     for (const item of items) {
         const eventTime = item.time as string;
 
         // Stop if date changes
-        if (!eventTime.startsWith(sinceDate)) {
+        if (eventTime.startsWith(getNextDay(sinceDate))) {
             console.log("Stopping at different event date:", eventTime);
             return false;
         }
@@ -92,7 +110,7 @@ export async function downloadAllEventsOfDayCSV(
     // Build initial request URL
     const baseUrl = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/events`;
     const initialUrl = `${baseUrl}?subscriptionId=${encodeURIComponent(subscriptionId)}&since=${encodeURIComponent(sinceDate + " 00:00:00")}`;
-
+    console.log("sinceDate", sinceDate);
     let token = await getOAuthToken(clientId, clientSecret, instanceUrl);
 
     // Get first page
