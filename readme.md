@@ -44,6 +44,7 @@ Please see the code snippet below.
     getActivityCustomerInventories("clientId", "clientSecret", "instanceId"."activityId")
     createActivityCustomerInventories( "clientId", "clientSecret", "instanceId"."activityId","payload")
     downloadAllEventsOfDay(process.env.clientID, process.env.clientSecret, process.env.instanceId, process.env.subscriptionId,"2025-12-05")
+    getActivitybyId("clientId", "clientSecret", "instanceId"."activityId")
 
 ## Usage
 

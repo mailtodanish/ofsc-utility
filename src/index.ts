@@ -36,9 +36,7 @@ export {
   downloadAllInventoryTypesCSV, getInventoryTypesDetail, updateCreateInventoryType
 } from './inventoryTypes';
 
-export {
-  getAllActivities
-} from './activities';
+export { getActivitybyId, getAllActivities } from './activities';
 
 export { createActivityCustomerInventories, getActivityCustomerInventories } from './activityInventories';
 
@@ -60,7 +58,8 @@ const OfscUtility = {
   downloadAllEventsOfDayCSV: require('./events').downloadAllEventsOfDayCSV,
   downloadAllEventsOfDay: require('./events').downloadAllEventsOfDay,
   generateUsersCollaborationCSV: require('./users').generateUsersCollaborationCSV,
-  generateAllOnHandInventoryOfAllResourcesCSV: require('./inventory').generateAllOnHandInventoryOfAllResourcesCSV
+  generateAllOnHandInventoryOfAllResourcesCSV: require('./inventory').generateAllOnHandInventoryOfAllResourcesCSV,
+  getActivitybyId: require('./activities').getActivitybyId
 
 };
 

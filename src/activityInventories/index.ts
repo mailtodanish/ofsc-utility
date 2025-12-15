@@ -15,12 +15,13 @@ export async function getActivityCustomerInventories(
     clientId: string,
     clientSecret: string,
     instanceUrl: string,
-    activityId: string
+    activityId: string,
+    token: string=""
 ): Promise<any[]> {
 
     const limit = 100;
     let offset = 0;
-    let token = await getOAuthToken(clientId, clientSecret, instanceUrl);
+    // let token = await getOAuthToken(clientId, clientSecret, instanceUrl);
 
     const allItems: any[] = [];
 
@@ -31,7 +32,7 @@ export async function getActivityCustomerInventories(
         });
 
         const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/${activityId}/customerInventories?${params}`;
-
+        
         console.log(`➡️ Fetching offset=${offset}, limit=${limit}`);
 
         const response = await fetchWithRetry(url, clientId, clientSecret, instanceUrl, token);
@@ -71,13 +72,13 @@ export async function createActivityCustomerInventories(
     clientSecret: string,
     instanceUrl: string,
     activityId: string,
-    payload: {}
+    payload: {},
 ): Promise<{}> {
 
     const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/${activityId}/customerInventories`;
 
     const token = await getOAuthToken(clientId, clientSecret, instanceUrl);
-
+    console.log(`➡️ creating ${url}`);
     const res = await fetch(url, {
         method: "POST",
         headers: {

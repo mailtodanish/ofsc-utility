@@ -16,7 +16,9 @@ export const fetchWithRetry = async (
     clientId: string,
     clientSecret: string,
     instanceUrl: string,
-    token: string
+    token: string,
+    retries: number = 5,
+    baseDelay: number = 500
 ): Promise<{ data: any; token: string }> => {
 
     const doFetch = async (bearer: string) => {
@@ -28,16 +30,36 @@ export const fetchWithRetry = async (
             }
         });
     };
-
+    console.log(`➡️ Fetching ${url}`);
     // Try with the current token
     let res = await doFetch(token);
 
-    // If 401 → renew and retry
+    /* ---------- 401: refresh token ONCE per call ---------- */
     if (res.status === 401) {
         console.warn("⚠️ Token expired — renewing token…");
         token = await getOAuthToken(clientId, clientSecret, instanceUrl);
 
         res = await doFetch(token);
+    }
+
+     /* ---------- 429: retry with backoff ---------- */
+    if (res.status === 429 && retries > 0) {
+        const retryAfter = res.headers.get("Retry-After");
+        console.log("⚠️ 429 received. Retrying...",retryAfter);
+        const delay = retryAfter ? Number(retryAfter) * 1000 : baseDelay;
+        console.warn(`⚠️ 429 received. Retrying in ${delay}ms... (${retries} left)`);
+
+        await new Promise(r => setTimeout(r, delay));
+
+        return fetchWithRetry(
+            url,
+            clientId,
+            clientSecret,
+            instanceUrl,
+            token,
+            retries - 1,
+            baseDelay * 2
+        );
     }
 
     // If still not OK → fail

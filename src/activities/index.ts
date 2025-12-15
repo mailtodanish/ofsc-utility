@@ -1,5 +1,5 @@
 import { getOAuthToken } from "../oauthTokenService";
-import { Response } from "../types";
+import { fetchWithRetry } from "../utilities";
 
 // Validate YYYY-MM-DD format
 const isValidDate = (date: string): boolean =>
@@ -28,7 +28,7 @@ export async function getAllActivities(
     dateTo: string,
     q?: string,
     fields?: string,
-
+    includeNonScheduled: boolean = false
 ): Promise<any[]> {
 
     // Validate date inputs
@@ -36,7 +36,7 @@ export async function getAllActivities(
         throw new Error(`❌ Invalid date format. Expected YYYY-MM-DD.`);
     }
 
-    const limit = 100;
+    let limit = 1000;
     let offset = 0;
 
     const allItems: any[] = [];
@@ -56,30 +56,16 @@ export async function getAllActivities(
         if (fields) params.append("fields", fields);
         if (dateFrom) params.append("dateFrom", dateFrom);
         if (dateTo) params.append("dateTo", dateTo);
+        if (includeNonScheduled) params.append("includeNonScheduled", "true");
 
         const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/?${params.toString()}`;
         console.error(url);
 
         console.log(`➡️ Fetching offset=${offset}, limit=${limit}`);
 
-        const res = await fetch(url, {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-                Accept: "application/json"
-            }
-        });
+        const response = await fetchWithRetry(url, clientId, clientSecret, instanceUrl, token);
 
-        if (!res.ok) {
-            const data = (await res.json()) as Response;
-
-            throw new Error(
-                `❌ Fetch failed: ${res.status} ${res.statusText}\n` +
-                `Response: ${JSON.stringify(data, null, 2)}`
-            );
-        }
-
-        const data = (await res.json()) as Response;
+        const data = response.data;
 
         if (!data.items || data.items.length === 0) {
             console.log("✔ No more items found. Stopping pagination.");
@@ -88,9 +74,28 @@ export async function getAllActivities(
 
         allItems.push(...data.items);
         console.log(`   ✔ Received ${data.items.length} items (Total: ${allItems.length})`);
-
+        limit = data.limit;
         offset += limit;
     }
 
     return allItems;
+}
+
+export async function getActivitybyId(
+    clientId: string,
+    clientSecret: string,
+    instanceUrl: string,
+    activityId: number,
+    token: string=""
+
+): Promise<{ token: string; data: any }> {
+
+    const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/${Number(activityId)}/`;
+
+    console.log(`➡️ Fetching activity by ID: ${url}`);
+
+    const response = await fetchWithRetry(url, clientId, clientSecret, instanceUrl, token);
+
+    return    response;
+
 }
