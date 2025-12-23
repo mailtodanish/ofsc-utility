@@ -5,10 +5,11 @@ export * as ActivityInventories from './activityInventories';
 export * as Events from './events';
 export * as Inventory from './inventory';
 export * as InventoryType from './inventoryTypes';
+export * as CreateConfigurationFile from './metadata';
 export * as OauthTokenService from './oauthTokenService';
 export * as Resource from './resources';
 export * as User from './users';
-export * as CSV from './utilities';
+export * as Utilities from './utilities';
 export * as WorkZone from './workZones';
 // Export types
 export * from './types';
@@ -24,9 +25,7 @@ export {
   downloadWorkZoneCSV
 } from './workZones';
 
-export {
-  downloadAllResourcesCSV
-} from './resources';
+export { AllResources, downloadAllResourcesCSV, getworkSkillsOfResource } from './resources';
 
 export {
   downloadAllUsersCSV, generateUsersCollaborationCSV
@@ -41,6 +40,10 @@ export { getActivitybyId, getAllActivities } from './activities';
 export { createActivityCustomerInventories, getActivityCustomerInventories } from './activityInventories';
 
 export { downloadAllEventsOfDay, downloadAllEventsOfDayCSV } from './events';
+
+export { createExcelFile } from './utilities';
+
+export { createConfigurationFile } from './metadata';
 
 
 // Default export with all functionality
@@ -59,8 +62,11 @@ const OfscUtility = {
   downloadAllEventsOfDay: require('./events').downloadAllEventsOfDay,
   generateUsersCollaborationCSV: require('./users').generateUsersCollaborationCSV,
   generateAllOnHandInventoryOfAllResourcesCSV: require('./inventory').generateAllOnHandInventoryOfAllResourcesCSV,
-  getActivitybyId: require('./activities').getActivitybyId
-
+  getActivitybyId: require('./activities').getActivitybyId,
+  AllResources: require('./activities').AllResources,
+  getworkSkillsOfResource: require('./resources').getworkSkillsOfResource,
+  createExcelFile: require('./utilities').createExcelFile,
+  createConfigurationFile: require('./metadata').createConfigurationFile
 };
 
 export default OfscUtility;

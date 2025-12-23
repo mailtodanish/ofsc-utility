@@ -2,6 +2,7 @@ import * as fs from "fs";
 import fetch from "node-fetch";
 import { getOAuthToken } from "../oauthTokenService/index";
 import { ResourceResponse } from "../types";
+import { fetchWithRetry } from "../utilities";
 
 export async function downloadAllResourcesCSV(
   clientId: string,
@@ -57,7 +58,7 @@ export async function downloadAllResourcesCSV(
 
   for (const item of allItems) {
     for (const key of Object.keys(item)) {
-      if (!["links","inventories","users","workZones","workSkills","workSchedules"].includes(key)) {
+      if (!["links", "inventories", "users", "workZones", "workSkills", "workSchedules"].includes(key)) {
         allProperties.add(key);
       }
     }
@@ -101,4 +102,73 @@ export async function downloadAllResourcesCSV(
   console.log(`🧩 Total Columns (Dynamic): ${headers.length}`);
   console.log(`🧩 Date Time: ${new Date()}`);
   console.log("-------------------------------------");
+}
+
+interface FetchWithRetryResult {
+  data: ResourceResponse;
+  token: string;
+}
+
+
+export async function AllResources(
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  initialToken = ""
+): Promise<any[]> {
+
+  const fetchResources = async (
+    offset: number,
+    token: string
+  ): Promise<ResourceResponse[]> => {
+    const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/resources/?offset=${offset}&limit=100`;
+
+    const res: FetchWithRetryResult = await fetchWithRetry(
+      url,
+      clientId,
+      clientSecret,
+      instanceUrl,
+      token
+    );
+
+    const { items, totalResults } = res.data;
+    const totalFetched = items.length;
+
+    console.log(`✔ Received ${totalFetched} items (Total: ${offset + totalFetched})`);
+
+    if (offset + totalFetched >= totalResults) {
+      return items;
+    }
+
+    const nextItems = await fetchResources(
+      offset + totalFetched,
+      res.token
+    );
+
+    return [...items, ...nextItems];
+  };
+
+  return fetchResources(0, initialToken);
+}
+
+export async function getworkSkillsOfResource(
+    clientId: string,
+    clientSecret: string,
+    instanceUrl: string,
+    resourceId: number,
+    token: string=""
+
+): Promise<{ token: string; data: any }> {
+
+    const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/resources/${encodeURIComponent(resourceId)}/workSkills`;
+
+    console.log(`➡️ Fetching workSkills by resourceID: ${url}`);
+
+    const response = await fetchWithRetry(url, clientId, clientSecret, instanceUrl, token);
+
+    return   {
+        token: response.token,
+        data: response.data.items
+    };
+
 }

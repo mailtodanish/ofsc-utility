@@ -46,6 +46,11 @@ Please see the code snippet below.
     downloadAllEventsOfDay(process.env.clientID, process.env.clientSecret, process.env.instanceId, process.env.subscriptionId,"2025-12-05")
     getActivitybyId("clientId", "clientSecret", "instanceId"."activityId")
 
+### Technical Design Doc - Configurations
+
+    // It will create a techncial configuration file
+    createConfigurationFile(process.env.clientID, process.env.clientSecreat,process.env.instanceId,"OFSC_CONFIGURATION_SHEET.xlsx")
+
 ## Usage
 
 downloadWorkZoneCSV("bot", "XXXXXXXXX", "compXXX.test")
