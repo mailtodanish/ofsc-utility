@@ -3,7 +3,7 @@ import { getOAuthToken } from "../oauthTokenService/index";
 import { EventResponse } from "../types";
 import { fetchWithRetry, saveCsv } from "../utilities";
 
-
+import { getTimeBefore180SecondsAlt, validateDateTimeStrict } from "../utilities/index";
 type AnyObject = { [key: string]: any };
 
 
@@ -173,5 +173,95 @@ export async function downloadAllEventsOfDayCSV(
         saveCsv(events, fullPath);
         console.log(`✅ Saved ${events.length} events to: ${fullPath}`);
     }     
+    return events
+}
+
+
+
+/**
+ *  Events of last two minutes
+ * @param clientId 
+ * @param clientSecret 
+ * @param instanceUrl 
+ * @param subscriptionId 
+ * @returns 
+ */
+export async function downloadAllEventsOfDLastTwoMinutes(
+    clientId: string,
+    clientSecret: string,
+    instanceUrl: string,
+    subscriptionId: string,
+): Promise<any[]> {
+
+    // All collected events
+    const events: any[] = [];
+
+    const since = getTimeBefore180SecondsAlt();   
+
+    let isValidate = validateDateTimeStrict(since);
+    if (!isValidate.isValid) {
+        throw new Error(isValidate.error);
+    }
+
+    // Build initial request URL
+    const baseUrl = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/events`;
+    const initialUrl = `${baseUrl}?subscriptionId=${encodeURIComponent(subscriptionId)}&since=${encodeURIComponent(since)}`;
+    console.log("sinceDate", since);
+    let token = await getOAuthToken(clientId, clientSecret, instanceUrl);
+
+    // Get first page
+    let firstPage = await fetchEventsPage(initialUrl, token, clientId, clientSecret, instanceUrl);
+    token = firstPage.token;
+
+    let nextPage = firstPage.data.nextPage;
+    let found = firstPage.data.found;
+
+    // Controls infinite loop
+    let lastSeenPage = nextPage;
+    let repeatedPageCount = 0;
+
+    // Loop through pages
+    while (found && nextPage) {
+        const pageUrl = new URL(baseUrl);
+        pageUrl.search = new URLSearchParams({
+            subscriptionId,
+            page: nextPage,
+            limit: "1000",
+        }).toString();
+
+        const finalUrl = pageUrl.toString();
+
+        const result = await fetchEventsPage(finalUrl, token, clientId, clientSecret, instanceUrl);
+        token = result.token;
+
+        const page = result.data;
+        found = page.found;
+        nextPage = page.nextPage;
+        console.error("nextPage", nextPage, "Records:", page.items?.length , "Time:", page.items?.[0]?.time);
+        // Prevent infinite looping
+        if (nextPage === lastSeenPage) {
+            repeatedPageCount++;
+            if (repeatedPageCount > 10) {
+                console.warn("⚠️ Pagination repeating same page more than 10 times. Stopping.");
+                break;
+            }
+        } else {
+            lastSeenPage = nextPage;
+            repeatedPageCount = 0;
+        }
+
+        // Add events
+        if (!page.items){
+            console.warn("⚠️ No items found in page. Stopping.");
+            break;
+        }
+        
+        for (let k of page.items) {
+            events.push(k);
+        }
+       
+    }
+
+       
     return events
 }

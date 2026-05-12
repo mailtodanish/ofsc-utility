@@ -310,3 +310,57 @@ export function createExcelFile(
   XLSX.writeFile(workbook, filename);
   console.log(`✓ Excel file created: ${filename}`);
 }
+
+interface ValidationResult {
+  isValid: boolean;
+  error?: string;
+}
+
+/**
+ * Validate Date String Format must be YYYY-MM-DD HH:MM:SS 
+ * @param dateTimeStr :string
+ * @returns 
+ */
+export function validateDateTimeStrict(dateTimeStr: string): ValidationResult {
+  const regex = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/;
+  const match = dateTimeStr.match(regex);
+  
+  if (!match) {
+    return { isValid: false, error: 'Format must be YYYY-MM-DD HH:MM:SS' };
+  }
+  
+  const [, year, month, day, hours, minutes, seconds] = match.map(Number);
+  
+  if (month < 1 || month > 12) {
+    return { isValid: false, error: 'Month must be between 1 and 12' };
+  }
+  
+  const daysInMonth = new Date(year, month, 0).getDate();
+  if (day < 1 || day > daysInMonth) {
+    return { isValid: false, error: `Day must be between 1 and ${daysInMonth}` };
+  }
+  
+  if (hours < 0 || hours > 23) {
+    return { isValid: false, error: 'Hours must be between 0 and 23' };
+  }
+  
+  if (minutes < 0 || minutes > 59) {
+    return { isValid: false, error: 'Minutes must be between 0 and 59' };
+  }
+  
+  if (seconds < 0 || seconds > 59) {
+    return { isValid: false, error: 'Seconds must be between 0 and 59' };
+  }
+  
+  return { isValid: true };
+}
+
+
+export function getTimeBefore180SecondsAlt(): string {
+  const timeBefore = new Date(Date.now() - 180000); // 180 * 1000 = 180000
+  
+  // Convert to ISO string and format
+  return timeBefore.toISOString()
+    .replace('T', ' ')
+    .substring(0, 19);
+}
