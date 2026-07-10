@@ -23,7 +23,7 @@ export async function getCapacityMetaData(
 
         token = res.token;
 
-        responsedata = [...responsedata, ...res.data.items];
+        responsedata = [...responsedata, ...res.data?.items ||[]];
 
 
         if (!res.data.hasMore) break;
@@ -82,7 +82,8 @@ async function capacitycategoriesOfacapacityArea(clientId: string, clientSecret:
             token
         );
         token = res.token;
-        for (const category of res.data.items) {
+
+        for (const category of res.data?.items || []) {
             data.push({
                 "capacityArea": capacityArea.label,
                 "Capacity Category": category.name,
