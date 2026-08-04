@@ -42,15 +42,20 @@ export async function getPropertiesDropDownMetaData(
 
         // Keep the latest token for subsequent requests.
         token = res.token;
+        if (res.data.items) {
+            responsedata = [...responsedata, ...res.data.items];
+        }
 
-        responsedata = [...responsedata, ...res.data.items];
-
+        // If the API indicates there are no more items, exit the loop.
         if (!res.data.hasMore) break;
 
+        // Update the offset for the next page of results.
         offset = res.data.offset + limit;
     }
 
+    // Transform the raw enumeration data into the final sheet format.
     return transformData(responsedata, allUsedPropes, label);
+
 }
 
 /**
