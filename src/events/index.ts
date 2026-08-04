@@ -309,15 +309,17 @@ export function generateHash(item: {
     activityId: string | number;
     time: string;
     activityChanges: unknown;
+    inventoryChanges?: unknown;
+    resourceDetails: { resourceId: string | number };
 }): string {
     return crypto
         .createHash("sha256")
         .update(
             stableStringify({
                 eventType: item.eventType,
-                activityId: item.activityId,
+                activityId: item.activityId || item.resourceDetails.resourceId,
                 time: item.time,
-                activityChanges: item.activityChanges,
+                activityChanges: item.activityChanges || item.inventoryChanges || {},
             })
         )
         .digest("hex");
@@ -423,6 +425,8 @@ export async function downloadAllEventsOfDLastTwoMinutes(
 
         for (let k of page.items) {
             k["uniqueId"] = generateHash(k);
+            k["Change"] = k.activityChanges || k.inventoryChanges || {};
+            k["Id"] = k.activityId || k.resourceDetails?.resourceId || '-';
             events.push(k);
         }
 
