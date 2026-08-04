@@ -16,6 +16,20 @@ import * as WorkSkills from "./workSkillConditions";
 import * as WorkZoneKey from "./workZoneKey";
 import * as WorkZone from "./workZones";
 
+export { getActivityTypesGroupsMetaData } from './activityTypeGroup';
+export { getActivityTypesMetaData } from './activityTypes';
+export { getApplictaionsIntegrationsDetailMetaData } from './applictaionsIntegration';
+export { getCapacityMetaData } from './capacity';
+export { getFormsMetaData } from './form';
+export { getInventoryTypesMetaData } from './inventoryTypes';
+export { getPropertiesMetaData } from './properties';
+export { getResourceTypesMetaData } from './resourceTypes';
+export { getShiftMetaData } from './shifts';
+export { getTimeSlotsMetaData } from './timeSlots';
+export { getWorkSkillsMetaData } from './workSkillConditions';
+export { getWorkZoneKeyMetaData } from './workZoneKey';
+export { getWorkZonesMetaData } from './workZones';
+
 export async function createConfigurationFile(
     clientId: string,
     clientSecret: string,
@@ -35,24 +49,24 @@ export async function createConfigurationFile(
     let sheetDataShifts = await Shift.getShiftMetaData(clientId, clientSecret, instanceUrl);
     let sheetDataTimeSlots = await TimeSlots.getTimeSlotsMetaData(clientId, clientSecret, instanceUrl);
     let sheetDataWorkSkillsConsitions = await WorkSkills.getWorkSkillsMetaData(clientId, clientSecret, instanceUrl);
-    let sheetDataWorkZoneKey = await WorkZoneKey.getWorkZoneKeyMetaData(clientId, clientSecret, instanceUrl);    
-    let sheetDataWorkZones = await WorkZone.getWorkZonesMetaData(clientId, clientSecret, instanceUrl);   
+    let sheetDataWorkZoneKey = await WorkZoneKey.getWorkZoneKeyMetaData(clientId, clientSecret, instanceUrl);
+    let sheetDataWorkZones = await WorkZone.getWorkZonesMetaData(clientId, clientSecret, instanceUrl);
     let allUsedPropes = [
-        ...sheetDataWorkZoneKey.props, 
+        ...sheetDataWorkZoneKey.props,
         ...sheetDataWorkSkillsConsitions.props,
         ...sheetDataInventoryTypes.props
     ];
-    let sheetDataProperties = await Properties.getPropertiesMetaData(clientId, clientSecret, instanceUrl,allUsedPropes);
-    let sheets = Object.assign({}, 
-        sheetDataActivityType, 
-        sheetDataActivityTypeGroup, 
-        sheetDataApplictaionsIntegrations, 
+    let sheetDataProperties = await Properties.getPropertiesMetaData(clientId, clientSecret, instanceUrl, allUsedPropes);
+    let sheets = Object.assign({},
+        sheetDataActivityType,
+        sheetDataActivityTypeGroup,
+        sheetDataApplictaionsIntegrations,
         sheetDataCapacity,
         sheetDataCapacityCategories,
         sheetDataForm,
         sheetDataInventoryTypes.data,
         sheetDataLanguage,
-        sheetDataNonWorkingReason, 
+        sheetDataNonWorkingReason,
         sheetDataResourceTypes,
         sheetDataShifts,
         sheetDataTimeSlots,

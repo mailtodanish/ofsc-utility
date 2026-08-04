@@ -1,15 +1,13 @@
-# Enhanced ofsc utility
+# OFSC Utility
 
-A lightweight utility library for interacting with **Oracle Field Service Cloud (OFSC)**.
+A small TypeScript wrapper for Oracle Field Service Cloud (OFSC) REST APIs.
 
-## Features
+This package exposes grouped API helpers for common OFSC operations, including:
 
-- 🚀 **40+ utility methods**
-- 📚 **Written in TypeScript** with full type definitions
-- 🧪 **Completely tested** with Jest
-- 📦 **Zero dependencies**
-- 🎯 **Modular architecture** for tree-shaking
-- 🔧 **Multiple import styles** for flexibility
+- authentication
+- export/download helpers
+- inventory and activity records
+- metadata file generation
 
 ## Installation
 
@@ -17,189 +15,283 @@ A lightweight utility library for interacting with **Oracle Field Service Cloud 
 npm install ofsc-utility
 ```
 
-## Functions implemented
+## Getting Started
 
-### Download
+1. Install the package:
 
-Please see the code snippet below.
+```bash
+npm install ofsc-utility
+```
 
-#### csv
+2. Create a `.env` file or export environment variables in your shell:
 
-    downloadWorkZoneCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId)
-    downloadAllResourcesCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId)
-    downloadAllUsersCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId)
-    downloadAllInventoryTypesCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId)
-    downloadAllEventsOfDayCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId, process.env.subscriptionId,"2025-12-05")
-    // Download Collaboration groups  assigned to users
-    generateUsersCollaborationCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId) 
-    // Download all resource's inventories
-    generateAllOnHandInventoryOfAllResourcesCSV(process.env.clientID, process.env.clientSecret, process.env.instanceId) 
+```bash
+export CLIENT_ID=yourClientId
+export CLIENT_SECRET=yourClientSecret
+export INSTANCE_NAME=yourInstanceName
+export SUBSCRIPTION_ID=yourSubscriptionId
+```
 
-#### records
+3. Create a file such as `example.js` and add the sample code below.
 
-    getOAuthToken("clientId", "clientSecret", "instanceId")
-    getInventoryTypesDetail("clientId", "clientSecret", "instanceId"."inventory_label")
-    updateCreateInventoryType("clientId", "clientSecret", "instanceId"."inventory_label")
-    getAllActivities("clientId", "clientSecret", "instanceId"."resources","dateFrom","dateTo","q","fields")
-    getActivityCustomerInventories("clientId", "clientSecret", "instanceId"."activityId")
-    createActivityCustomerInventories( "clientId", "clientSecret", "instanceId"."activityId","payload")
-    downloadAllEventsOfDay(process.env.clientID, process.env.clientSecret, process.env.instanceId, process.env.subscriptionId,"2025-12-05")
-    getActivitybyId("clientId", "clientSecret", "instanceId"."activityId")
+4. Run the example:
 
-### Technical Design Doc - Configurations
+```bash
+node example.js
+```
 
-    // It will create a techncial configuration file
-    createConfigurationFile(process.env.clientID, process.env.clientSecreat,process.env.instanceId,"OFSC_CONFIGURATION_SHEET.xlsx")
-
-## Usage
-
-downloadWorkZoneCSV("bot", "XXXXXXXXX", "compXXX.test")
+## Quick Start
 
 ### CommonJS
 
 ```js
 const ofs = require("ofsc-utility");
 
-ofs.User.generateUsersCollaborationCSV(
-    process.env.clientID,
-    process.env.clientSecret,
-    process.env.instanceId,
-    process.env.subscriptionId
-);
-```
-
-```js
-async function run() {
-  let data = await ofs.InventoryType.getInventoryTypesDetail("clientId", "clientSecret", "instanceId", "inventory_label");
-  console.error(data);
-}
-run();
-```
-
-```js
-const ofs = require("ofsc-utility");
-
-ofs
-  .getOAuthToken("clientId", "clientSecret", "instanceId")
-  .then((token) => {
-    console.log(token);
-  })
-  .catch((err) => {
-    console.error("Error fetching token:", err);
-  });
-```
-
-```js
-const ofs = require("ofsc-utility");
-
-ofs.WorkZone.downloadWorkZoneCSV("clientId", "clientSecret", "instanceId")
-  .then(() => {
-    console.log("successful");
-  })
-  .catch((err) => {
-    console.error("Error:", err);
-  });
-```
-
-```js
-const ofs = require("ofsc-utility");
-
-ofs
-  .downloadAllResourcesCSV("clientId", "clientSecret", "instanceId")
-  .then(() => {
-    console.log("successful");
-  })
-  .catch((err) => {
-    console.error("Error:", err);
-  });
-```
-
-```js
-const ofs = require("ofsc-utility");
-
-ofs
-  .downloadAllUsersCSV("clientId", "clientSecret", "instanceId")
-  .then(() => {
-    console.log("successful");
-  })
-  .catch((err) => {
-    console.error("Error:", err);
-  });
-```
-
-```js
-const ofs = require("ofsc-utility");
-
-async function run() {
-  const payload = {
-    label: "inventory_label",
-    name: "Ordered Part",
-    unitOfMeasurement: "ea",
-    active: true,
-    nonSerialized: true,
-    modelProperty: "part_item_number_rev",
-    quantityPrecision: 0,
-    translations: [
-      {
-        language: "en",
-        name: "Ordered Part",
-        unitOfMeasurement: "ea",
-        languageISO: "en-US",
-      },
-    ],
-  };
-
-  try {
-    const result = await updateCreateInventoryType("CLIENT_ID", "CLIENT_SECRET", "INSTANCE_URL", "inventory_label", payload);
-
-    console.log("Updated:", result);
-  } catch (err) {
-    console.error(err);
-  }
+async function main() {
+  const token = await ofs.getOAuthToken(
+    "CLIENT_ID",
+    "CLIENT_SECRET",
+    "INSTANCE_NAME",
+  );
+  console.log("OAuth token:", token);
 }
 
-run();
+main().catch(console.error);
 ```
+
+### ES Modules
+
+```js
+import ofs from "ofsc-utility";
+
+async function main() {
+  const token = await ofs.getOAuthToken(
+    "CLIENT_ID",
+    "CLIENT_SECRET",
+    "INSTANCE_NAME",
+  );
+  console.log("OAuth token:", token);
+}
+
+main().catch(console.error);
+```
+
+## Complete Example
+
+This example shows a full CommonJS script that retrieves activity type metadata and prints the result.
 
 ```js
 const ofs = require("ofsc-utility");
-async function run() {
-  try {
-    const result = await ofs.getAllActivities(
-      (clientId = "CLIENT_ID"),
-      (clientSecret = "CLIENT_SECRET"),
-      (instanceUrl = "INSTANCE_URL"),
-      (resources = "US"),
-      (dateFrom = "2025-11-05"),
-      (dateTo = "2025-12-05"),
-      (q = "status=='pending' and ACTIVITY_NOTES!=''"),
-      (fields = "ACTIVITY_NOTES,status,activityId,activityType,date,resourceId")
+
+async function main() {
+  const clientId = process.env.CLIENT_ID;
+  const clientSecret = process.env.CLIENT_SECRET;
+  const instanceUrl = process.env.INSTANCE_NAME;
+
+  if (!clientId || !clientSecret || !instanceUrl) {
+    throw new Error(
+      "Please set CLIENT_ID, CLIENT_SECRET and INSTANCE_NAME environment variables",
     );
-
-    console.log("Updated:", result);
-  } catch (err) {
-    console.error(err);
   }
+
+  const activityTypes = await ofs.metadata.getActivityTypesMetaData(
+    clientId,
+    clientSecret,
+    instanceUrl,
+  );
+
+  console.log("Activity type metadata:");
+  console.log(JSON.stringify(activityTypes, null, 2));
 }
 
-run();
-```
-
-```js
-ofs.getActivityCustomerInventories("CLIENT_ID", "CLIENT_SECRET", "INSTANCE_URL", "activityId").then((data) => {
-  console.log(data);
+main().catch((error) => {
+  console.error("Error running example:", error);
+  process.exit(1);
 });
 ```
 
+## Usage
+
+### Authentication
+
+```js
+const token = await ofs.getOAuthToken(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+```
+
+### Download CSV files
+
+```js
+await ofs.downloadWorkZoneCSV(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+
+await ofs.downloadAllResourcesCSV(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+
+await ofs.downloadAllUsersCSV(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+```
+
+### Activity and inventory helpers
+
+```js
+const activities = await ofs.getAllActivities(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  "US",
+  "2025-11-01",
+  "2025-11-30",
+  "status=='pending'",
+  "activityId,activityType,date,status",
+);
+
+const activityData = await ofs.getActivitybyId(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  "ACTIVITY_ID",
+);
+
+const inventoryDetail = await ofs.InventoryType.getInventoryTypesDetail(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  "inventory_label",
+);
+```
+
+### Create a configuration workbook
+
+```js
+await ofs.createConfigurationFile(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  "OFSC_CONFIGURATION_SHEET.xlsx",
+);
+```
+
+### Metadata helpers
+
+The `metadata` group exposes metadata-specific retrieval helpers.
+
+```js
+const meta = ofs.metadata;
+
+const activityTypes = await meta.getActivityTypesMetaData(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+
+const activityGroups = await meta.getActivityTypesGroupsMetaData(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+
+const workZones = await meta.getWorkZonesMetaData(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+```
+
+### Namespace-style imports
+
 ```js
 const ofs = require("ofsc-utility");
-ofs.Events.downloadAllEventsOfDayCSV(
-  process.env.clientID,
-  process.env.clientSecret,
-  process.env.instanceId,
-  process.env.subscriptionId,
-  "2025-12-05"
+
+await ofs.WorkZone.downloadWorkZoneCSV(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
 );
+
+await ofs.User.generateUsersCollaborationCSV(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  process.env.SUBSCRIPTION_ID,
+);
+```
+
+## Available exports
+
+Top-level exports include:
+
+- `getOAuthToken`
+- `downloadWorkZoneCSV`
+- `downloadAllResourcesCSV`
+- `downloadAllUsersCSV`
+- `downloadAllInventoryTypesCSV`
+- `getInventoryTypesDetail`
+- `updateCreateInventoryType`
+- `getAllActivities`
+- `getActivitybyId`
+- `getActivityCustomerInventories`
+- `createActivityCustomerInventories`
+- `downloadAllEventsOfDay`
+- `downloadAllEventsOfDayCSV`
+- `createExcelFile`
+- `createConfigurationFile`
+
+Grouped exports include:
+
+- `ofs.Activity`
+- `ofs.ActivityInventories`
+- `ofs.Events`
+- `ofs.Inventory`
+- `ofs.InventoryType`
+- `ofs.OauthTokenService`
+- `ofs.Resource`
+- `ofs.User`
+- `ofs.Utilities`
+- `ofs.WorkZone`
+- `ofs.metadata`
+
+## Metadata namespace
+
+The `metadata` object exposes metadata helpers such as:
+
+- `getActivityTypesMetaData`
+- `getActivityTypesGroupsMetaData`
+- `getApplictaionsIntegrationsDetailMetaData`
+- `getCapacityMetaData`
+- `getFormsMetaData`
+- `getInventoryTypesMetaData`
+- `getPropertiesMetaData`
+- `getResourceTypesMetaData`
+- `getShiftMetaData`
+- `getTimeSlotsMetaData`
+- `getWorkSkillsMetaData`
+- `getWorkZoneKeyMetaData`
+- `getWorkZonesMetaData`
+- `createConfigurationFile`
+
+## Notes
+
+- `instanceUrl` is the OFSC instance name only, not the full URL. For example: `mycompany` for `mycompany.fs.ocs.oraclecloud.com`.
+- All API helper methods accept the same `clientId`, `clientSecret`, and `instanceUrl` parameters at minimum.
+- Most helper methods return a promise and should be used with `await` or `.then()`.
+
+## Testing
+
+```bash
+npm test
 ```
 
 ## License

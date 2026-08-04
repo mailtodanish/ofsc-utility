@@ -138,7 +138,7 @@ function processEventItems(items: any[], sinceDate: string, output: any[]) {
         const activityId = item.activityDetails?.activityId ?? null;
 
         item["uniqueId"] = generateHash(item);
-        item["Change"] = item.activityChanges || item.inventoryChanges || item.requestChanges || {};
+        item["Change"] = item.activityChanges || item.inventoryChanges || item.requestChanges || item.userChanges || {};
         item["Id"] = item.activityId || item.resourceDetails?.resourceId || '-';
 
         output.push({ activityId, ...item });
@@ -262,8 +262,16 @@ export async function downloadAllEventsOfDayCSV(
     const filename = `events-${sinceDate}_${ts}.csv`;
     const fullPath = path.resolve(filename);
     if (!onlyData) {
-        saveCsv(events, fullPath);
-        console.log(`✅ Saved ${events.length} events to: ${fullPath}`);
+        try {
+            if (events.length === 0) {
+                console.warn(`⚠️ No events to save for ${sinceDate}. Skipping CSV export.`);
+            } else {
+                saveCsv(events, fullPath);
+                console.log(`✅ Saved ${events.length} events to: ${fullPath}`);
+            }
+        } catch (error) {
+            console.error(`Failed to save events CSV to ${fullPath}:`, error);
+        }
     }
     return events
 }
@@ -316,13 +324,15 @@ export function generateHash(item: {
     inventoryChanges?: unknown;
     resourceDetails: { resourceId: string | number };
     requestChanges?: unknown;
+    userDetails?: { login: string; status: string };
+    activityDetails?: { activityId: string | number };
 }): string {
     return crypto
         .createHash("sha256")
         .update(
             stableStringify({
                 eventType: item.eventType,
-                activityId: item.activityId || item.resourceDetails.resourceId,
+                activityId: item.activityDetails?.activityId || item.resourceDetails?.resourceId || item.userDetails?.login || '-',
                 time: item.time,
                 activityChanges: item.activityChanges || item.inventoryChanges || item.requestChanges || {},
             })
@@ -430,8 +440,8 @@ export async function downloadAllEventsOfDLastTwoMinutes(
 
         for (let k of page.items) {
             k["uniqueId"] = generateHash(k);
-            k["Change"] = k.activityChanges || k.inventoryChanges || k.requestChanges || {};
-            k["Id"] = k.activityId || k.resourceDetails?.resourceId || '-';
+            k["Change"] = k.activityChanges || k.inventoryChanges || k.requestChanges || k.userChanges || {};
+            k["Id"] = k.activityDetails?.activityId || k.resourceDetails?.resourceId || `${k.userDetails?.login}(${k.userDetails?.status})` || '-';
             events.push(k);
         }
 

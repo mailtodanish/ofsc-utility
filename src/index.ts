@@ -58,6 +58,23 @@ const OfscUtility = {
   getAllActivities: require('./activities').getAllActivities,
   getActivityCustomerInventories: require('./activityInventories').getActivityCustomerInventories,
   createActivityCustomerInventories: require('./activityInventories').createActivityCustomerInventories,
+  metadata: {
+    getActivityTypesMetaData: require('./metadata').getActivityTypesMetaData,
+    getActivityTypesGroupsMetaData: require('./metadata').getActivityTypesGroupsMetaData,
+    getApplictaionsIntegrationsDetailMetaData: require('./metadata').getApplictaionsIntegrationsDetailMetaData,
+    getCapacityMetaData: require('./metadata').getCapacityMetaData,
+    getFormsMetaData: require('./metadata').getFormsMetaData,
+    getInventoryTypesMetaData: require('./metadata').getInventoryTypesMetaData,
+    getPropertiesMetaData: require('./metadata').getPropertiesMetaData,
+    getResourceTypesMetaData: require('./metadata').getResourceTypesMetaData,
+    getShiftMetaData: require('./metadata').getShiftMetaData,
+    getTimeSlotsMetaData: require('./metadata').getTimeSlotsMetaData,
+    getWorkSkillsMetaData: require('./metadata').getWorkSkillsMetaData,
+    getWorkZoneKeyMetaData: require('./metadata').getWorkZoneKeyMetaData,
+    getWorkZonesMetaData: require('./metadata').getWorkZonesMetaData,
+    createConfigurationFile: require('./metadata').createConfigurationFile
+  },
+
   downloadAllEventsOfDayCSV: require('./events').downloadAllEventsOfDayCSV,
   downloadAllEventsOfDay: require('./events').downloadAllEventsOfDay,
   generateUsersCollaborationCSV: require('./users').generateUsersCollaborationCSV,
@@ -65,8 +82,7 @@ const OfscUtility = {
   getActivitybyId: require('./activities').getActivitybyId,
   AllResources: require('./activities').AllResources,
   getworkSkillsOfResource: require('./resources').getworkSkillsOfResource,
-  createExcelFile: require('./utilities').createExcelFile,
-  createConfigurationFile: require('./metadata').createConfigurationFile
+  createExcelFile: require('./utilities').createExcelFile
 };
 
 export default OfscUtility;
