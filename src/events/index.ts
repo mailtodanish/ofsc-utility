@@ -137,6 +137,10 @@ function processEventItems(items: any[], sinceDate: string, output: any[]) {
         // Add activityId as first level field
         const activityId = item.activityDetails?.activityId ?? null;
 
+        item["uniqueId"] = generateHash(item);
+        item["Change"] = item.activityChanges || item.inventoryChanges || item.requestChanges || {};
+        item["Id"] = item.activityId || item.resourceDetails?.resourceId || '-';
+
         output.push({ activityId, ...item });
     }
     return true
@@ -311,6 +315,7 @@ export function generateHash(item: {
     activityChanges: unknown;
     inventoryChanges?: unknown;
     resourceDetails: { resourceId: string | number };
+    requestChanges?: unknown;
 }): string {
     return crypto
         .createHash("sha256")
@@ -319,7 +324,7 @@ export function generateHash(item: {
                 eventType: item.eventType,
                 activityId: item.activityId || item.resourceDetails.resourceId,
                 time: item.time,
-                activityChanges: item.activityChanges || item.inventoryChanges || {},
+                activityChanges: item.activityChanges || item.inventoryChanges || item.requestChanges || {},
             })
         )
         .digest("hex");
@@ -425,7 +430,7 @@ export async function downloadAllEventsOfDLastTwoMinutes(
 
         for (let k of page.items) {
             k["uniqueId"] = generateHash(k);
-            k["Change"] = k.activityChanges || k.inventoryChanges || {};
+            k["Change"] = k.activityChanges || k.inventoryChanges || k.requestChanges || {};
             k["Id"] = k.activityId || k.resourceDetails?.resourceId || '-';
             events.push(k);
         }
