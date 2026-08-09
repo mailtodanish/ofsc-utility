@@ -39,7 +39,7 @@ export { getActivitybyId, getAllActivities } from './activities';
 
 export { createActivityCustomerInventories, getActivityCustomerInventories } from './activityInventories';
 
-export { downloadAllEventsOfDay, downloadAllEventsOfDayCSV } from './events';
+export { downloadAllEventsOfDay, downloadAllEventsOfDayCSV, downloadAllEventsOfLastOneHour } from './events';
 
 export { createExcelFile } from './utilities';
 
@@ -77,6 +77,7 @@ const OfscUtility = {
 
   downloadAllEventsOfDayCSV: require('./events').downloadAllEventsOfDayCSV,
   downloadAllEventsOfDay: require('./events').downloadAllEventsOfDay,
+  downloadAllEventsOfLastOneHour: require('./events').downloadAllEventsOfLastOneHour,
   generateUsersCollaborationCSV: require('./users').generateUsersCollaborationCSV,
   generateAllOnHandInventoryOfAllResourcesCSV: require('./inventory').generateAllOnHandInventoryOfAllResourcesCSV,
   getActivitybyId: require('./activities').getActivitybyId,

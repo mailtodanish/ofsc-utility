@@ -144,6 +144,18 @@ await ofs.downloadAllUsersCSV(
 );
 ```
 
+### Export all on-hand inventory for all resources
+
+```js
+await ofs.generateAllOnHandInventoryOfAllResourcesCSV(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+```
+
+This helper fetches all active resources and downloads a CSV containing their on-hand inventory rows.
+
 ### Activity and inventory helpers
 
 ```js
@@ -237,6 +249,7 @@ Top-level exports include:
 - `downloadWorkZoneCSV`
 - `downloadAllResourcesCSV`
 - `downloadAllUsersCSV`
+- `generateAllOnHandInventoryOfAllResourcesCSV`
 - `downloadAllInventoryTypesCSV`
 - `getInventoryTypesDetail`
 - `updateCreateInventoryType`
@@ -281,6 +294,29 @@ The `metadata` object exposes metadata helpers such as:
 - `getWorkZoneKeyMetaData`
 - `getWorkZonesMetaData`
 - `createConfigurationFile`
+
+### Properties metadata note
+
+The `getPropertiesMetaData` helper fetches OFSC property definitions and then builds:
+
+- `Properties Overview`: one row per property, including label, name, type, entity, GUI, clone flag, and deduplicated comments
+- `Properties Enumerations`: combined enumeration dropdown values for any properties whose data type is `enumeration`
+
+This function requires an `allUsedPropes` array to identify which properties are referenced by other metadata types and to collect comments for the overview.
+
+```js
+const allPropes = [];
+
+const propertiesSheet = await ofs.metadata.getPropertiesMetaData(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  allPropes,
+);
+
+console.log(propertiesSheet["Properties Overview"]);
+console.log(propertiesSheet["Properties Enumerations"]);
+```
 
 ## Notes
 
