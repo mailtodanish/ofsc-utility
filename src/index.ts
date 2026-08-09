@@ -14,9 +14,7 @@ export * as WorkZone from './workZones';
 // Export types
 export * from './types';
 
-export {
-  generateAllOnHandInventoryOfAllResourcesCSV
-} from './inventory';
+export { generateAllOnHandInventoryOfAllResources, generateAllOnHandInventoryOfAllResourcesCSV } from './inventory';
 export {
   getOAuthToken
 } from './oauthTokenService';
@@ -39,7 +37,7 @@ export { getActivitybyId, getAllActivities } from './activities';
 
 export { createActivityCustomerInventories, getActivityCustomerInventories } from './activityInventories';
 
-export { downloadAllEventsOfDay, downloadAllEventsOfDayCSV, downloadAllEventsOfLastOneHour } from './events';
+export { downloadAllEventsOfDay, downloadAllEventsOfDayCSV, downloadAllEventsOfDLastTwoMinutes, downloadAllEventsOfLastOneHour } from './events';
 
 export { createExcelFile } from './utilities';
 

@@ -144,7 +144,7 @@ await ofs.downloadAllUsersCSV(
 );
 ```
 
-### Export all on-hand inventory for all resources
+### Resource related methods
 
 ```js
 await ofs.generateAllOnHandInventoryOfAllResourcesCSV(
@@ -154,7 +154,41 @@ await ofs.generateAllOnHandInventoryOfAllResourcesCSV(
 );
 ```
 
-This helper fetches all active resources and downloads a CSV containing their on-hand inventory rows.
+This helper fetches all active resources and writes their on-hand inventory rows to a CSV file.
+
+```js
+const inventoryResult = await ofs.generateAllOnHandInventoryOfAllResources(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+
+console.log(`Loaded ${inventoryResult.data.length} inventory rows`);
+console.log("Available table columns:", inventoryResult.props);
+```
+
+This method fetches active resources and returns an object containing:
+
+- `data`: an array of inventory row objects
+- `props`: an array of unique keys found across all row objects
+
+The `props` array can be used as your dynamic table columns. For example:
+
+```js
+const columns = inventoryResult.props;
+const rows = inventoryResult.data;
+
+columns.forEach((col) => {
+  console.log(`Column: ${col}`);
+});
+
+rows.forEach((row) => {
+  const cells = columns.map((col) => row[col]);
+  console.log(cells);
+});
+```
+
+This gives you a dynamic table definition based on the actual inventory row fields returned by OFSC.
 
 ### Activity and inventory helpers
 
@@ -250,6 +284,7 @@ Top-level exports include:
 - `downloadAllResourcesCSV`
 - `downloadAllUsersCSV`
 - `generateAllOnHandInventoryOfAllResourcesCSV`
+- `generateAllOnHandInventoryOfAllResources`
 - `downloadAllInventoryTypesCSV`
 - `getInventoryTypesDetail`
 - `updateCreateInventoryType`
