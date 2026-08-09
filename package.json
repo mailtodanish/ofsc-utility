@@ -1,7 +1,7 @@
 {
   "name": "ofsc-utility",
-  "version": "1.0.33",
-  "description": "A wrapper for Oracle Field Service REST API",
+  "version": "1.0.34",
+  "description": "TypeScript helpers for Oracle Field Service Cloud (OFSC): events, resources, inventories, metadata and CSV/Excel utilities.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -16,9 +16,10 @@
   "keywords": [
     "ofs",
     "oracle",
-    "getOAuthToken"
+    "Oracle Field Service",
+    "OFSC"
   ],
-  "author": "MOHD AHSHAN DANISH <mailtodanish@gmail.com>",
+  "author": "MOHD AHSHAN DANISH <https://www.linkedin.com/in/mohdahshandanish/>",
   "license": "MIT",
   "files": [
     "dist",
@@ -27,8 +28,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/mailtodanish/ofsc-utility"
+    "url": "git+https://github.com/mailtodanish/ofsc-utility.git"
   },
+  "bugs": {
+    "url": "https://github.com/mailtodanish/ofsc-utility/issues"
+  },
+  "homepage": "https://github.com/mailtodanish/ofsc-utility#readme",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
