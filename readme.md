@@ -32,6 +32,8 @@ export INSTANCE_NAME=yourInstanceName
 export SUBSCRIPTION_ID=yourSubscriptionId
 ```
 
+- `instanceUrl` is the OFSC instance name only, not the full URL. For example: `mycompany` for `mycompany.fs.ocs.oraclecloud.com`.
+
 3. Create a file such as `example.js` and add the sample code below.
 
 4. Run the example:
