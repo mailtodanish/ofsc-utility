@@ -16,7 +16,7 @@ export async function downloadAllUsersCSV(
   let allItems: any[] = [];
   let totalFetched = 0;
 
-  console.log("🚀 Starting users download...");
+  console.log("Starting users download...");
   console.log("-------------------------------------");
 
   while (true) {
@@ -24,7 +24,7 @@ export async function downloadAllUsersCSV(
 
     const token = await getOAuthToken(clientId, clientSecret, instanceUrl);
 
-    console.log(`➡️ Fetching offset=${offset} limit=${limit}`);
+    console.log(`Fetching offset=${offset} limit=${limit}`);
 
     const res = await fetch(url, {
       method: "GET",
@@ -35,7 +35,7 @@ export async function downloadAllUsersCSV(
     });
 
     if (!res.ok) {
-      throw new Error(`❌ Fetch failed: ${res.status} ${res.statusText}`);
+      throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
     }
 
     const data = (await res.json()) as ResourceResponse;
@@ -43,7 +43,7 @@ export async function downloadAllUsersCSV(
     allItems.push(...data.items);
     totalFetched += data.items.length;
 
-    console.log(`   ✔ Received ${data.items.length} items (Total: ${totalFetched})`);
+    console.log(`   Received ${data.items.length} items (Total: ${totalFetched})`);
 
     if (offset + limit >= data.totalResults) break;
 
@@ -51,7 +51,7 @@ export async function downloadAllUsersCSV(
   }
 
   console.log("-------------------------------------");
-  console.log("🧩 Collecting all unique properties...");
+  console.log("Collecting all unique properties...");
 
   // Collect union of all properties
   const allProperties = new Set<string>();
@@ -65,7 +65,7 @@ export async function downloadAllUsersCSV(
   }
 
   const headers = Array.from(allProperties);
-  console.log(`📝 Total unique fields: ${headers.length}`);
+  console.log(`Total unique fields: ${headers.length}`);
 
   // Build CSV rows
   const csvRows: string[] = [];
@@ -96,11 +96,11 @@ export async function downloadAllUsersCSV(
   fs.writeFileSync(filePath, csvRows.join("\n"));
 
   console.log("-------------------------------------");
-  console.log("✅ Users CSV Created Successfully!");
-  console.log(`📁 File: ${filePath}`);
-  console.log(`📦 Total Records: ${totalFetched}`);
-  console.log(`🧩 Total Columns (Dynamic): ${headers.length}`);
-  console.log(`🧩 Date Time: ${new Date()}`);
+  console.log("Users CSV Created Successfully!");
+  console.log(`File: ${filePath}`);
+  console.log(`Total Records: ${totalFetched}`);
+  console.log(`Total Columns (Dynamic): ${headers.length}`);
+  console.log(`Date Time: ${new Date()}`);
   console.log("-------------------------------------");
 }
 
@@ -146,7 +146,7 @@ export async function downloadAllInactiveUsersCSV(
   let allItems: any[] = [];
   let totalFetched = 0;
 
-  console.log("🚀 Starting users download...");
+  console.log("Starting users download...");
   console.log("-------------------------------------");
 
   while (true) {
@@ -154,7 +154,7 @@ export async function downloadAllInactiveUsersCSV(
 
     const token = await getOAuthToken(clientId, clientSecret, instanceUrl);
 
-    console.log(`➡️ Fetching offset=${offset} limit=${limit}`);
+    console.log(`Fetching offset=${offset} limit=${limit}`);
 
     const res = await fetch(url, {
       method: "GET",
@@ -165,7 +165,7 @@ export async function downloadAllInactiveUsersCSV(
     });
 
     if (!res.ok) {
-      throw new Error(`❌ Fetch failed: ${res.status} ${res.statusText}`);
+      throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
     }
 
     const data = (await res.json()) as ResourceResponse;
@@ -173,7 +173,7 @@ export async function downloadAllInactiveUsersCSV(
     allItems.push(...data.items);
     totalFetched += data.items.length;
 
-    console.log(`   ✔ Received ${data.items.length} items (Total: ${totalFetched})`);
+    console.log(`   Received ${data.items.length} items (Total: ${totalFetched})`);
 
     if (offset + limit >= data.totalResults) break;
 
@@ -181,15 +181,15 @@ export async function downloadAllInactiveUsersCSV(
   }
 
   console.log("-------------------------------------");
-  console.log(`🔎 Filtering inactive users (no login in last ${inactivityThresholdDays} days)...`);
+  console.log(`Filtering inactive users (no login in last ${inactivityThresholdDays} days)...`);
 
   const now = new Date();
   const inactiveItems = allItems.filter(item => isInactiveUser(item, inactivityThresholdDays, now));
 
-  console.log(`   ✔ ${inactiveItems.length} of ${allItems.length} users are inactive`);
+  console.log(`   ${inactiveItems.length} of ${allItems.length} users are inactive`);
 
   console.log("-------------------------------------");
-  console.log("🧩 Collecting all unique properties...");
+  console.log("Collecting all unique properties...");
 
   // Collect union of all properties (from inactive users only)
   const allProperties = new Set<string>();
@@ -203,7 +203,7 @@ export async function downloadAllInactiveUsersCSV(
   }
 
   const headers = Array.from(allProperties);
-  console.log(`📝 Total unique fields: ${headers.length}`);
+  console.log(`Total unique fields: ${headers.length}`);
 
   // Build CSV rows
   const csvRows: string[] = [];
@@ -234,12 +234,123 @@ export async function downloadAllInactiveUsersCSV(
   fs.writeFileSync(filePath, csvRows.join("\n"));
 
   console.log("-------------------------------------");
-  console.log("✅ Inactive Users CSV Created Successfully!");
-  console.log(`📁 File: ${filePath}`);
-  console.log(`📦 Total Fetched: ${totalFetched}`);
-  console.log(`🚫 Inactive Records (>${inactivityThresholdDays} days): ${inactiveItems.length}`);
-  console.log(`🧩 Total Columns (Dynamic): ${headers.length}`);
-  console.log(`🧩 Date Time: ${new Date()}`);
+  console.log("Inactive Users CSV Created Successfully!");
+  console.log(`File: ${filePath}`);
+  console.log(`Total Fetched: ${totalFetched}`);
+  console.log(`Inactive Records (>${inactivityThresholdDays} days): ${inactiveItems.length}`);
+  console.log(`Total Columns (Dynamic): ${headers.length}`);
+  console.log(`Date Time: ${new Date()}`);
   console.log("-------------------------------------");
+}
+
+export async function downloadAllInactiveUsers(
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  inactivityThresholdDays: number = 14
+): Promise<Record<string, any>[]> {
+
+  let offset = 0;
+  const limit = 100;
+
+  let allItems: any[] = [];
+  let totalFetched = 0;
+
+  console.log("Starting users download...");
+  console.log("-------------------------------------");
+
+  while (true) {
+    const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/users/?offset=${offset}&limit=${limit}`;
+
+    const token = await getOAuthToken(clientId, clientSecret, instanceUrl);
+
+    console.log(`Fetching offset=${offset} limit=${limit}`);
+
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json"
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
+    }
+
+    const data = (await res.json()) as ResourceResponse;
+
+    allItems.push(...data.items);
+    totalFetched += data.items.length;
+
+    console.log(`   Received ${data.items.length} items (Total: ${totalFetched})`);
+
+    if (offset + limit >= data.totalResults) break;
+
+    offset += limit;
+  }
+
+  console.log("-------------------------------------");
+  console.log(`Filtering inactive users (no login in last ${inactivityThresholdDays} days)...`);
+
+  const now = new Date();
+
+  // Skip users with blank/missing lastLoginTime (never-login users are ignored entirely)
+  const usersWithLogin = allItems.filter(item => !!parseOFSCDate(item.lastLoginTime));
+  const skippedNeverLoggedIn = allItems.length - usersWithLogin.length;
+
+  const inactiveItems = usersWithLogin.filter(item =>
+    isInactiveUser(item, inactivityThresholdDays, now)
+  );
+
+  console.log(`   Skipped (never logged in / blank lastLoginTime): ${skippedNeverLoggedIn}`);
+  console.log(`   ${inactiveItems.length} of ${usersWithLogin.length} users with login history are inactive`);
+
+  console.log("-------------------------------------");
+  console.log("Collecting all unique properties...");
+
+  // Collect union of all properties (from inactive users only)
+  const allProperties = new Set<string>();
+
+  for (const item of inactiveItems) {
+    for (const key of Object.keys(item)) {
+      if (!["resources", "collaborationGroups", "resourceInternalIds", "links"].includes(key)) {
+        allProperties.add(key);
+      }
+    }
+  }
+
+  const headers = Array.from(allProperties);
+  console.log(`Total unique fields: ${headers.length}`);
+
+  // Build array of plain objects (one per inactive user)
+  const result: Record<string, any>[] = inactiveItems.map(item => {
+    const obj: Record<string, any> = {};
+
+    for (const field of headers) {
+      let value = item[field];
+
+      if (field === "keys") {
+        obj[field] = Array.isArray(value) ? value.join("|") : (value ?? "");
+        continue;
+      }
+
+      // Keep objects as objects (no JSON-stringify/escaping needed since this isn't CSV)
+      obj[field] = value !== undefined ? value : null;
+    }
+
+    return obj;
+  });
+
+  console.log("-------------------------------------");
+  console.log("Inactive Users Collected Successfully!");
+  console.log(`Total Fetched: ${totalFetched}`);
+  console.log(`Skipped (never logged in): ${skippedNeverLoggedIn}`);
+  console.log(`Inactive Records (>${inactivityThresholdDays} days): ${result.length}`);
+  console.log(`Total Columns (Dynamic): ${headers.length}`);
+  console.log(`Date Time: ${new Date()}`);
+  console.log("-------------------------------------");
+
+  return result;
 }
 export default OfscUserUtility;

@@ -144,7 +144,162 @@ await ofs.downloadAllUsersCSV(
   process.env.CLIENT_SECRET,
   process.env.INSTANCE_NAME,
 );
+
+await ofs.downloadAllInactiveUsersCSV(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  14,
+);
 ```
+
+#### Download inactive users
+
+`downloadAllInactiveUsersCSV` downloads all users from the OFSC Users API, filters
+the results, and writes the matching users to `./inactive_users.csv`.
+
+A user is considered inactive when either:
+
+- `lastLoginTime` is missing or cannot be parsed, or
+- the time since `lastLoginTime` is greater than `inactivityThresholdDays`
+
+The threshold defaults to `14` days. The comparison uses the current date and
+time when the function runs. A user whose last login is exactly at the threshold
+is not included because the function uses a strictly greater-than comparison.
+
+```js
+const ofs = require("ofsc-utility");
+
+async function downloadInactiveUsers() {
+  const clientId = process.env.CLIENT_ID;
+  const clientSecret = process.env.CLIENT_SECRET;
+  const instanceUrl = process.env.INSTANCE_NAME;
+
+  if (!clientId || !clientSecret || !instanceUrl) {
+    throw new Error(
+      "Set CLIENT_ID, CLIENT_SECRET and INSTANCE_NAME before running this example",
+    );
+  }
+
+  await ofs.downloadAllInactiveUsersCSV(
+    clientId,
+    clientSecret,
+    instanceUrl,
+    14,
+  );
+}
+
+downloadInactiveUsers().catch((error) => {
+  console.error("Failed to download inactive users:", error);
+  process.exit(1);
+});
+```
+
+**Function signature**
+
+```ts
+downloadAllInactiveUsersCSV(
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  inactivityThresholdDays?: number,
+): Promise<void>
+```
+
+**Parameters**
+
+- `clientId`: OFSC OAuth client ID.
+- `clientSecret`: OFSC OAuth client secret.
+- `instanceUrl`: OFSC instance name only, such as `mycompany`. Do not include
+  `https://` or `.fs.ocs.oraclecloud.com`.
+- `inactivityThresholdDays`: optional non-negative number of days. Defaults to
+  `14`.
+
+**Output**
+
+- File: `./inactive_users.csv`, relative to the process working directory.
+- The CSV contains one row per inactive user.
+- Nested fields such as `resources`, `collaborationGroups`,
+  `resourceInternalIds`, and `links` are excluded.
+- The remaining columns are generated dynamically from the fields returned by
+  the API. `keys` arrays are joined with `|`; other objects are serialized as
+  JSON strings.
+
+The helper retrieves users in pages of 100 records and requires valid OFSC API
+credentials. It does not return the CSV contents; successful completion resolves
+to `void`.
+
+To run the repository test script against a built distribution:
+
+```bash
+npm run build
+export CLIENT_ID=yourClientId
+export CLIENT_SECRET=yourClientSecret
+export INSTANCE_URL=yourInstanceName
+export INACTIVITY_THRESHOLD_DAYS=14
+node scripts/test-download-inactive-users.js
+```
+
+`INACTIVITY_THRESHOLD_DAYS` is optional in the test script and defaults to `14`.
+
+#### Collect inactive users
+
+`downloadAllInactiveUsers` downloads users from the OFSC Users API, filters out
+users whose last login is within the inactivity threshold, and returns the
+matching users as an array of plain objects. It does not create a CSV file.
+
+Unlike `downloadAllInactiveUsersCSV`, users with a blank(never loggedin)
+`lastLoginTime` are skipped. The threshold defaults to `14` days, and a user is
+included only when the time since the last login is strictly greater than the
+threshold.
+
+```js
+const ofs = require("ofsc-utility");
+
+async function collectInactiveUsers() {
+  const users = await ofs.User.downloadAllInactiveUsers(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    process.env.INSTANCE_NAME,
+    14,
+  );
+
+  console.log(`Collected ${users.length} inactive users`);
+  console.log(users[0]);
+}
+
+collectInactiveUsers().catch((error) => {
+  console.error("Failed to collect inactive users:", error);
+  process.exit(1);
+});
+```
+
+**Function signature**
+
+```ts
+downloadAllInactiveUsers(
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  inactivityThresholdDays?: number,
+): Promise<Record<string, any>[]>
+```
+
+**Parameters and result**
+
+- `clientId`: OFSC OAuth client ID.
+- `clientSecret`: OFSC OAuth client secret.
+- `instanceUrl`: OFSC instance name only, such as `mycompany`. Do not include
+  `https://` or `.fs.ocs.oraclecloud.com`.
+- `inactivityThresholdDays`: optional non-negative number of days. Defaults to
+  `14`.
+- The returned array contains one object per inactive user.
+- Nested fields such as `resources`, `collaborationGroups`,
+  `resourceInternalIds`, and `links` are excluded.
+- `keys` arrays are joined with `|`; other object values remain objects.
+
+The helper retrieves users in pages of 100 records and requires valid OFSC API
+credentials.
 
 ### Resource related methods
 
@@ -285,6 +440,7 @@ Top-level exports include:
 - `downloadWorkZoneCSV`
 - `downloadAllResourcesCSV`
 - `downloadAllUsersCSV`
+- `downloadAllInactiveUsersCSV`
 - `generateAllOnHandInventoryOfAllResourcesCSV`
 - `generateAllOnHandInventoryOfAllResources`
 - `downloadAllInventoryTypesCSV`
