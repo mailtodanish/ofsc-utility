@@ -248,7 +248,7 @@ node scripts/test-download-inactive-users.js
 users whose last login is within the inactivity threshold, and returns the
 matching users as an array of plain objects. It does not create a CSV file.
 
-Unlike `downloadAllInactiveUsersCSV`, users with a blank(never loggedin)
+Unlike `downloadAllInactiveUsersCSV`, users with a blank or unparsable
 `lastLoginTime` are skipped. The threshold defaults to `14` days, and a user is
 included only when the time since the last login is strictly greater than the
 threshold.
@@ -300,6 +300,19 @@ downloadAllInactiveUsers(
 
 The helper retrieves users in pages of 100 records and requires valid OFSC API
 credentials.
+
+To run the repository test script against a built distribution:
+
+```bash
+npm run build
+export CLIENT_ID=yourClientId
+export CLIENT_SECRET=yourClientSecret
+export INSTANCE_URL=yourInstanceName
+export INACTIVITY_THRESHOLD_DAYS=14
+node scripts/test-download-inactive-users-data.js
+```
+
+`INACTIVITY_THRESHOLD_DAYS` is optional in the test script and defaults to `14`.
 
 ### Resource related methods
 

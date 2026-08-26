@@ -113,7 +113,8 @@ export {
 const OfscUserUtility = {
   generateUsersCollaborationCSV: require('./collaborationGroups').generateUsersCollaborationCSV,
   downloadAllUsersCSV,
-  downloadAllInactiveUsersCSV
+  downloadAllInactiveUsersCSV,
+  downloadAllInactiveUsers
 };
 
 
