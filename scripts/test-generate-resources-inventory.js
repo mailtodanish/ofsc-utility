@@ -4,6 +4,7 @@
  *
  * Usage:
  *   npm run build
+ *   source scripts/.env
  *   node scripts/test-generate-resources-inventory.js
  *
  * Required environment variables:
@@ -39,9 +40,11 @@ if (!clientId || !clientSecret || !instanceUrl) {
       clientId,
       clientSecret,
       instanceUrl,
+      100, // consider only last 100 resources
     );
 
     console.log(`Fetched ${inventories.length} inventory rows`);
+
     if (inventories.length > 0) {
       console.log("Sample row:", inventories[0]);
     }

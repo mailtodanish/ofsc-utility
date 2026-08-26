@@ -117,11 +117,12 @@ export async function generateAllOnHandInventoryOfAllResourcesCSV(
 export async function generateAllOnHandInventoryOfAllResources(
     clientId: string,
     clientSecret: string,
-    instanceUrl: string
+    instanceUrl: string,
+    limit?: number,
 ): Promise<{ data: any[]; props: string[] }> {
 
     let offset = 0;
-    const limit = 100;
+    const pageLimit = limit ?? 100;
 
     const allResources: any[] = [];
     let token = "";
@@ -131,7 +132,7 @@ export async function generateAllOnHandInventoryOfAllResources(
 
 
     while (true) {
-        const resourcesUrl = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/resources/?offset=${offset}&limit=${limit}`;
+        const resourcesUrl = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/resources/?offset=${offset}&limit=${pageLimit}`;
         console.log(`➡️ Fetching resources offset=${offset}`);
 
         const res = await fetchWithRetry(resourcesUrl, clientId, clientSecret, instanceUrl, token);
@@ -148,8 +149,8 @@ export async function generateAllOnHandInventoryOfAllResources(
 
         console.log(`   ✔ Received ${data.items.length} resources (Total: ${allResources.length})`);
 
-        if (offset + limit >= data.totalResults) break;
-        offset += limit;
+        if (offset + pageLimit >= data.totalResults) break;
+        offset += pageLimit;
 
     }
 
@@ -159,11 +160,20 @@ export async function generateAllOnHandInventoryOfAllResources(
 
 
     // 2. Fetch on hand inventories for each resource
+    const resourcesToProcess = limit
+        ? allResources.slice(-limit)
+        : allResources;
 
     const rows: any[] = [];
 
-    for (const [index, resource] of allResources.entries()) {
+    for (const [index, resource] of resourcesToProcess.entries()) {
+
         console.log(`${index} 👤 Fetching Inventories for ${resource.resourceId}`);
+
+        if (!resource || !resource.resourceId || ["", null, undefined, "undefined"].includes(resource.resourceId)) {
+            console.log(`resourceId is misisng for ${JSON.stringify(resource, undefined, 2)}`)
+            continue;
+        }
 
         if (resource.status !== "active") {
             console.log(`   ⚠ Skipping inactive resource ${resource.resourceId}`);
@@ -172,9 +182,9 @@ export async function generateAllOnHandInventoryOfAllResources(
 
         offset = 0;
         while (true) {
-            const invUrl = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/resources/${encodeURIComponent(resource.resourceId)}/inventories/?offset=${offset}&limit=${limit}`;
+            const invUrl = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/resources/${encodeURIComponent(resource.resourceId)}/inventories/?offset=${offset}&limit=${pageLimit}`;
             try {
-
+                console.log(`➡️ Fetching resources offset=${offset}`);
                 const res = await fetchWithRetry(invUrl, clientId, clientSecret, instanceUrl, token);
 
                 token = res.token;
@@ -195,9 +205,9 @@ export async function generateAllOnHandInventoryOfAllResources(
 
                 console.log(`   ✔ Found ${items.length} Inventories`);
 
-                if (offset + limit >= itemsData.totalResults) break;
+                if (offset + pageLimit >= itemsData.totalResults) break;
 
-                offset += limit;
+                offset += pageLimit;
 
             } catch (err) {
                 console.error(`❌ Error fetching Inventories for ${resource.resourceId}:`, err);

@@ -373,3 +373,15 @@ export function getTimeBefore3600SecondsAlt(): string {
     .replace('T', ' ')
     .substring(0, 19);
 }
+
+/**
+ * Parses OFSC-style "YYYY-MM-DD HH:mm:ss" into a Date object.
+ * Falls back to null if the value is missing/unparseable.
+ */
+export function parseOFSCDate(value: unknown): Date | null {
+  if (!value || typeof value !== "string") return null;
+  // Convert "2026-08-07 12:31:18" -> "2026-08-07T12:31:18"
+  const isoLike = value.trim().replace(" ", "T");
+  const d = new Date(isoLike);
+  return isNaN(d.getTime()) ? null : d;
+}
