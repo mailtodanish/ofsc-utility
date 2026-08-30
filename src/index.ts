@@ -23,7 +23,7 @@ export {
   downloadWorkZoneCSV
 } from './workZones';
 
-export { AllResources, downloadAllResourcesCSV, getworkSkillsOfResource } from './resources';
+export { AllResources, downloadAllResourcesCSV, getResourcebyId, getworkSkillsOfResource } from './resources';
 
 export { downloadAllInactiveUsers, downloadAllInactiveUsersCSV, downloadAllUsersCSV, generateUsersCollaborationCSV } from './users';
 
@@ -79,6 +79,7 @@ const OfscUtility = {
   getActivitybyId: require('./activities').getActivitybyId,
   AllResources: require('./activities').AllResources,
   getworkSkillsOfResource: require('./resources').getworkSkillsOfResource,
+  getResource: require('./resources').getResourcebyId,
   createExcelFile: require('./utilities').createExcelFile
 };
 

@@ -471,6 +471,7 @@ Top-level exports include:
 - `getOAuthToken`
 - `downloadWorkZoneCSV`
 - `downloadAllResourcesCSV`
+- `getResource`
 - `downloadAllUsersCSV`
 - `downloadAllInactiveUsersCSV`
 - `generateAllOnHandInventoryOfAllResourcesCSV`

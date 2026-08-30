@@ -1,6 +1,6 @@
 {
   "name": "ofsc-utility",
-  "version": "1.0.43",
+  "version": "1.0.44",
   "description": "TypeScript helpers for Oracle Field Service Cloud (OFSC): events, resources, inventories, metadata and CSV/Excel utilities.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,16 +14,21 @@
     "dev": "ts-node src/index.ts"
   },
   "keywords": [
-    "ofs",
     "oracle",
-    "Oracle Field Service",
-    "OFSC"
+    "oracle-field-service",
+    "oracle-field-service-cloud",
+    "ofsc",
+    "ofsc-plugin",
+    "field-service",
+    "oracle-ofsc",
+    "oracle-cloud"
   ],
   "author": "MOHD AHSHAN DANISH <https://www.linkedin.com/in/mohdahshandanish/>",
   "license": "MIT",
   "files": [
     "dist",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "repository": {

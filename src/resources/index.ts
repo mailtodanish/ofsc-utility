@@ -115,7 +115,7 @@ export async function AllResources(
   clientSecret: string,
   instanceUrl: string,
   initialToken = ""
-): Promise<any[]> {
+): Promise<ResourceResponse[]> {
 
   const fetchResources = async (
     offset: number,
@@ -152,23 +152,51 @@ export async function AllResources(
 }
 
 export async function getworkSkillsOfResource(
-    clientId: string,
-    clientSecret: string,
-    instanceUrl: string,
-    resourceId: number,
-    token: string=""
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  resourceId: number,
+  token: string = ""
 
 ): Promise<{ token: string; data: any }> {
 
-    const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/resources/${encodeURIComponent(resourceId)}/workSkills`;
+  const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/resources/${encodeURIComponent(resourceId)}/workSkills`;
 
-    console.log(`➡️ Fetching workSkills by resourceID: ${url}`);
+  console.log(`➡️ Fetching workSkills by resourceID: ${url}`);
 
-    const response = await fetchWithRetry(url, clientId, clientSecret, instanceUrl, token);
+  const response = await fetchWithRetry(url, clientId, clientSecret, instanceUrl, token);
 
-    return   {
-        token: response.token,
-        data: response.data.items
-    };
+  return {
+    token: response.token,
+    data: response.data.items
+  };
 
+}
+
+export async function getResourcebyId(
+  resourceId: string,
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  initialToken = ""
+): Promise<ResourceResponse> {
+
+  const fetchResources = async (
+    offset: number,
+    token: string
+  ): Promise<ResourceResponse> => {
+    const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/resources/${encodeURIComponent(resourceId)}?offset=${offset}&limit=100`;
+
+    const res: FetchWithRetryResult = await fetchWithRetry(
+      url,
+      clientId,
+      clientSecret,
+      instanceUrl,
+      token
+    );
+
+    return res.data;
+  };
+
+  return fetchResources(0, initialToken);
 }
