@@ -44,7 +44,7 @@ export const fetchWithRetry = async (
   }
 
   /* ---------- 429: retry with backoff ---------- */
-  if ((res.status === 429 || res.status === 400) && retries > 0) {
+  if ((res.status === 429 || res.status === 502 || res.status === 503 || res.status === 504) && retries > 0) {
     const retryAfter = res.headers.get("Retry-After");
     console.log("⚠️ 429 received. Retrying...", retryAfter);
     const delay = retryAfter ? Number(retryAfter) * 1000 : baseDelay;
