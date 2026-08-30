@@ -7,4 +7,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- version 1.0.43 with built-in resilience and exponential backoff
 - Add -c flag to skip CHANGELOG updates and auto-update logic

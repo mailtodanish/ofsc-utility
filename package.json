@@ -1,6 +1,6 @@
 {
   "name": "ofsc-utility",
-  "version": "1.0.42",
+  "version": "1.0.43",
   "description": "TypeScript helpers for Oracle Field Service Cloud (OFSC): events, resources, inventories, metadata and CSV/Excel utilities.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

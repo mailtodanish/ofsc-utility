@@ -9,10 +9,29 @@ This package exposes grouped API helpers for common OFSC operations, including:
 - inventory and activity records
 - metadata file generation
 
+### Built-in resilience for OFSC's server errors
+
+OFSC's REST API sits behind Oracle's gateway infrastructure, which means calls can occasionally fail with transient errors that have nothing to do with your request — the gateway losing its connection to the backend, a brief service restart, or normal rate limiting under load. This package handles those cases automatically so your integration doesn't fail on a blip that would have succeeded a second later.
+
+### Exponential backoff
+
+Retries don't hammer the API at a fixed interval — each attempt waits longer than the last (starting at a small base delay and doubling each time), unless OFSC explicitly tells us how long to wait via Retry-After. This gives Oracle's backend room to recover instead of adding to the load that likely caused the error in the first place.
+
+### Why this matters for OFSC specifically
+
+OFSC's gateway is known to return 503s and connection resets during normal operation — not just outages — especially under sustained polling or bulk export workloads (events, activities, inventory).Handling these
+transparently means:
+
+- Scheduled jobs don't die on a single flaky response and require manual re-runs
+- Token expiry mid-session is handled without the caller needing to track token lifetimes
+- You get clear, real error messages (with the response body attached) for
+  genuine failures, instead of noisy retries on errors that were never going
+  to succeed
+
 ## Installation
 
 ```bash
-npm install ofsc-utility
+npm install ofsc-utility@latest
 ```
 
 ## Getting Started
