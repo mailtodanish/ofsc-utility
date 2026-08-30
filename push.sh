@@ -8,6 +8,14 @@
 #   ./push.sh -M codellama        use a specific Ollama model
 #   ./push.sh -n                  dry run: show diff and generated message, don't commit or push
 #   ./push.sh -b feature/foo      push to a specific branch instead of current
+#   ./push.sh -c                  skip updating CHANGELOG.md
+#
+# CHANGELOG.md:
+#   Each run adds one bullet to CHANGELOG.md under "## [Unreleased]", filed into a
+#   section (Added/Fixed/Changed/Documentation/Removed/Maintenance) based on the
+#   conventional commit type (feat/fix/refactor/docs/etc) in the first line of the
+#   commit message. The file is created automatically on first use, following the
+#   Keep a Changelog format (https://keepachangelog.com/).
 #
 # Requirements:
 #   - git
@@ -23,20 +31,23 @@ OLLAMA_MODEL="${OLLAMA_MODEL:-qwen3:8b}"
 MANUAL_MESSAGE=""
 DRY_RUN=false
 TARGET_BRANCH=""
+SKIP_CHANGELOG=false
 
 # ---------- arg parsing ----------
-while getopts "m:M:b:nh" opt; do
+while getopts "m:M:b:nch" opt; do
   case "$opt" in
     m) MANUAL_MESSAGE="$OPTARG" ;;
     M) OLLAMA_MODEL="$OPTARG" ;;
     b) TARGET_BRANCH="$OPTARG" ;;
     n) DRY_RUN=true ;;
+    c) SKIP_CHANGELOG=true ;;
     h)
-      echo "Usage: $0 [-m \"message\"] [-M model] [-b branch] [-n]"
+      echo "Usage: $0 [-m \"message\"] [-M model] [-b branch] [-n] [-c]"
       echo "  -m  Manual commit message (skips Ollama)"
       echo "  -M  Ollama model to use (default: qwen3:8b)"
       echo "  -b  Target branch to push (default: current branch)"
       echo "  -n  Dry run, show diff and generated message, don't commit or push"
+      echo "  -c  Skip updating CHANGELOG.md"
       exit 0
       ;;
     *)
@@ -171,6 +182,75 @@ case "$CONFIRM" in
     rm -f "$TMP_MSG_FILE"
     ;;
 esac
+
+# ---------- update CHANGELOG.md ----------
+update_changelog() {
+  local msg="$1"
+  local changelog="CHANGELOG.md"
+  local first_line
+  first_line="$(echo "$msg" | head -n 1)"
+
+  # Parse "type: summary" or "type(scope): summary" from the first line.
+  local type="chore"
+  local summary="$first_line"
+  if [[ "$first_line" =~ ^([a-zA-Z]+)(\([^\)]+\))?:\ *(.+)$ ]]; then
+    type="${BASH_REMATCH[1],,}"
+    summary="${BASH_REMATCH[3]}"
+  fi
+
+  # Map conventional commit type -> Keep a Changelog section
+  local section
+  case "$type" in
+    feat)                section="Added" ;;
+    fix)                 section="Fixed" ;;
+    docs)                section="Documentation" ;;
+    refactor|perf|style) section="Changed" ;;
+    test|chore|build|ci) section="Maintenance" ;;
+    remove|revert)        section="Removed" ;;
+    *)                    section="Changed" ;;
+  esac
+
+  # Create CHANGELOG.md with a standard header if it doesn't exist yet
+  if [[ ! -f "$changelog" ]]; then
+    cat > "$changelog" <<'HEADER'
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+## [Unreleased]
+HEADER
+  fi
+
+  # Ensure an [Unreleased] section exists
+  if ! grep -q "^## \[Unreleased\]" "$changelog"; then
+    printf "\n## [Unreleased]\n" >> "$changelog"
+  fi
+
+  local entry="- ${summary}"
+
+  if grep -q "^### ${section}$" "$changelog"; then
+    # Section already exists under Unreleased: append the entry right after its heading
+    awk -v section="### ${section}" -v entry="$entry" '
+      { print }
+      $0 == section && !done { print entry; done = 1 }
+    ' "$changelog" > "${changelog}.tmp" && mv "${changelog}.tmp" "$changelog"
+  else
+    # Section doesn't exist yet: add it right after "## [Unreleased]"
+    awk -v heading="### ${section}" -v entry="$entry" '
+      { print }
+      /^## \[Unreleased\]$/ && !done { print ""; print heading; print entry; done = 1 }
+    ' "$changelog" > "${changelog}.tmp" && mv "${changelog}.tmp" "$changelog"
+  fi
+
+  git add "$changelog"
+}
+
+if ! $SKIP_CHANGELOG; then
+  echo "Updating CHANGELOG.md..."
+  update_changelog "$COMMIT_MSG"
+fi
 
 # ---------- commit ----------
 echo "Committing..."
