@@ -21,7 +21,6 @@ export const fetchWithRetry = async (
   retries: number = 5,
   baseDelay: number = 500
 ): Promise<{ data: any; token: string }> => {
-
   const doFetch = async (bearer: string) => {
     return fetch(url, {
       method: "GET",
@@ -31,49 +30,93 @@ export const fetchWithRetry = async (
       }
     });
   };
-  console.log(`➡️ Fetching ${url}`);
-  // Try with the current token
-  let res = await doFetch(token);
 
-  /* ---------- 401: refresh token ONCE per call ---------- */
-  if (res.status === 401) {
-    console.warn("⚠️ Token expired — renewing token…");
-    token = await getOAuthToken(clientId, clientSecret, instanceUrl);
+  console.log(`Fetching ${url}`);
 
-    res = await doFetch(token);
+  let currentToken = token;
+  let tokenRefreshed = false;
+  let remainingRetries = retries;
+  let delay = baseDelay;
+
+  while (true) {
+    let res = await doFetch(currentToken);
+
+    if (res.status === 401 && !tokenRefreshed) {
+      console.warn("Token expired — renewing token…");
+
+      currentToken = await getOAuthToken(
+        clientId,
+        clientSecret,
+        instanceUrl
+      );
+
+      tokenRefreshed = true;
+      continue;
+    }
+
+    const responseText = await res.text();
+
+    const isNoRouteToHost =
+      res.status === 400 &&
+      responseText.includes("NoRouteToHostException");
+
+    const isRetryableStatus =
+      res.status === 429 ||
+      res.status === 502 ||
+      res.status === 503 ||
+      res.status === 504;
+
+    if (
+      (isRetryableStatus || isNoRouteToHost) &&
+      remainingRetries > 0
+    ) {
+      const retryAfter = res.headers.get("Retry-After");
+
+      let retryDelay = delay;
+
+      if (retryAfter) {
+        const retryAfterSeconds = Number(retryAfter);
+
+        if (!Number.isNaN(retryAfterSeconds)) {
+          retryDelay = retryAfterSeconds * 1000;
+        }
+      }
+
+      console.warn(
+        `Retrying in ${retryDelay}ms... (${remainingRetries} retries left)`
+      );
+
+      await new Promise(resolve =>
+        setTimeout(resolve, retryDelay)
+      );
+
+      remainingRetries--;
+      delay *= 2;
+
+      continue;
+    }
+
+    if (!res.ok) {
+      throw new Error(
+        `Request failed: ${res.status} ${res.statusText}\n${responseText}`
+      );
+    }
+
+    let data: any;
+
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      throw new Error(
+        `Invalid JSON response from ${url}\n${responseText}`
+      );
+    }
+
+    return {
+      data,
+      token: currentToken
+    };
   }
-
-  /* ---------- 429: retry with backoff ---------- */
-  if ((res.status === 429 || res.status === 502 || res.status === 503 || res.status === 504) && retries > 0) {
-    const retryAfter = res.headers.get("Retry-After");
-    console.log("⚠️ 429 received. Retrying...", retryAfter);
-    const delay = retryAfter ? Number(retryAfter) * 1000 : baseDelay;
-    console.warn(`⚠️ 429 received. Retrying in ${delay}ms... (${retries} left)`);
-
-    await new Promise(r => setTimeout(r, delay));
-
-    return fetchWithRetry(
-      url,
-      clientId,
-      clientSecret,
-      instanceUrl,
-      token,
-      retries - 1,
-      baseDelay * 2
-    );
-  }
-
-  // If still not OK → fail
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`❌ Request failed: ${res.status} ${res.statusText}\n${body}`);
-  }
-
-  // Return parsed JSON + latest token
-  return {
-    data: await res.json(),
-    token
-  };
 };
 
 import fs from "fs";
