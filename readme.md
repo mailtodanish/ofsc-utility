@@ -335,6 +335,96 @@ node scripts/test-download-inactive-users-data.js
 
 ### Resource related methods
 
+#### Get all resources
+
+`AllResources` retrieves all resources from the OFSC Resources API. Results are
+fetched in pages of 100 records until every resource has been returned.
+
+```js
+const resources = await ofs.AllResources(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+
+console.log(`Loaded ${resources.length} resources`);
+```
+
+**Function signature**
+
+```ts
+AllResources(
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  initialToken?: string,
+): Promise<ResourceResponse[]>
+```
+
+`initialToken` is optional. The helper refreshes the token as needed while
+requesting subsequent pages.
+
+#### Get a resource by ID
+
+`getResourcebyId` fetches a single resource by its resource ID and returns the
+OFSC response envelope.
+
+```js
+const resource = await ofs.getResourcebyId(
+  "5457",
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+
+console.log(resource.items);
+```
+
+**Function signature**
+
+```ts
+getResourcebyId(
+  resourceId: string,
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  initialToken?: string,
+): Promise<ResourceResponse>
+```
+
+The returned response contains `items`, `offset`, `limit`, and `totalResults`.
+`initialToken` is optional.
+
+#### Get resource work skills
+
+`getworkSkillsOfResource` retrieves the work skills assigned to a resource.
+The result includes the token returned by the request and the skills in `data`.
+
+```js
+const workSkills = await ofs.getworkSkillsOfResource(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  5457,
+);
+
+console.log(workSkills.data);
+```
+
+**Function signature**
+
+```ts
+getworkSkillsOfResource(
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  resourceId: number,
+  token?: string,
+): Promise<{ token: string; data: any }>
+```
+
+`token` is optional. `data` contains the work-skill items returned by OFSC.
+
 ```js
 await ofs.generateAllOnHandInventoryOfAllResourcesCSV(
   process.env.CLIENT_ID,

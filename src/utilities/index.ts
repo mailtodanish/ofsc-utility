@@ -61,6 +61,7 @@ export const fetchWithRetry = async (
       responseText.includes("NoRouteToHostException");
 
     const isRetryableStatus =
+      res.status === 400 ||
       res.status === 429 ||
       res.status === 502 ||
       res.status === 503 ||
