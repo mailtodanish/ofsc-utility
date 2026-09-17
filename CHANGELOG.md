@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - version 1.0.46
 
 ### Added
+- Update version and add resource management APIs
 - version 1.0.47 and add resource APIs
 - release v1.0.44 with getResource function and updated keywords
 - version 1.0.43 with built-in resilience and exponential backoff

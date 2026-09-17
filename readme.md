@@ -172,6 +172,210 @@ await ofs.downloadAllInactiveUsersCSV(
 );
 ```
 
+### Resource APIs
+
+The resource helpers let you export, paginate, inspect, and update OFSC resources.
+
+#### `downloadAllResourcesCSV`
+
+Exports every resource in the OFSC resource collection to a local `./resources.csv` file.
+
+```js
+await ofs.downloadAllResourcesCSV(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+```
+
+What it does:
+
+- Calls the OFSC `/resources` endpoint in pages of 100 records.
+- Aggregates all returned items across all pages.
+- Builds a union of all field names from the API payloads.
+- Excludes nested relationship fields such as `links`, `inventories`, `users`,
+  `workZones`, `workSkills`, and `workSchedules` from the header set.
+- Writes the result to `./resources.csv` in the current working directory.
+- Serializes arrays under the `keys` field as pipe-delimited strings and JSON-serializes object values for CSV compatibility.
+
+Signature:
+
+```ts
+downloadAllResourcesCSV(
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+): Promise<void>
+```
+
+#### `AllResources`
+
+Fetches all resources across all pages and returns them as a single flattened array.
+
+```js
+const resources = await ofs.AllResources(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+
+console.log(`Found ${resources.length} resources`);
+```
+
+This helper is useful when you need to iterate through every resource object in memory, for analytics, reporting, or bulk transformations.
+
+Signature:
+
+```ts
+AllResources(
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  initialToken?: string,
+): Promise<ResourceResponse[]>
+```
+
+Notes:
+
+- It paginates automatically until all results are fetched.
+- It returns the flattened `items` collection from every page rather than the raw API wrapper object.
+- The optional `initialToken` parameter can be supplied if you already have a valid bearer token available and want to reuse it.
+
+#### `getworkSkillsOfResource`
+
+Retrieves all work skills assigned to a specific resource.
+
+```js
+const result = await ofs.getworkSkillsOfResource(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  12345,
+);
+
+console.log(result.data);
+console.log(result.token);
+```
+
+
+Signature:
+
+```ts
+getworkSkillsOfResource(
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  resourceId: number,
+  token?: string,
+): Promise<{ token: string; data: any }>
+```
+
+Return shape:
+
+```ts
+{
+  token: string,
+  data: any
+}
+```
+
+The `data` value is the `items` array returned by OFSC for the resource's work skills.
+
+#### `getResourcebyId`
+
+Fetches a single resource by its ID.
+
+```js
+const resource = await ofs.getResourcebyId(
+  "resource-123",
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+
+console.log(resource);
+```
+
+
+
+Signature:
+
+```ts
+getResourcebyId(
+  resourceId: string,
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  initialToken?: string,
+): Promise<ResourceResponse>
+```
+
+The response is the raw OFSC resource payload returned by the API, so you can inspect its `items`, `totalResults`, and related metadata with the same structure returned by OFSC.
+
+#### `updateResourcebyId`
+
+Updates a resource record by ID using a PATCH request.
+
+```js
+const payload = {
+  name: "Updated Resource Name",
+  status: "ACTIVE",
+};
+
+const response = await ofs.updateResourcebyId(
+  "resource-123",
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  "",
+  payload,
+);
+
+console.log(response);
+```
+
+Signature:
+
+```ts
+updateResourcebyId(
+  resourceId: string,
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  initialToken?: string,
+  payload: object,
+): Promise<ResourceResponse>
+```
+
+Notes:
+
+- The payload is sent as a PATCH body to the OFSC resource update endpoint.
+- It uses the same retry-wrapper logic as the other OFSC API methods so transient gateway and 5xx failures are retried automatically.
+- The returned value is the API response payload from OFSC.
+
+#### Example: working with a resource and its work skills
+
+```js
+const resourceId = "resource-123";
+
+const resource = await ofs.getResourcebyId(
+  resourceId,
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+
+const workSkills = await ofs.getworkSkillsOfResource(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  Number(resourceId),
+);
+
+console.log("Resource:", resource);
+console.log("Work skills:", workSkills.data);
+```
+
 #### Download inactive users
 
 `downloadAllInactiveUsersCSV` downloads all users from the OFSC Users API, filters

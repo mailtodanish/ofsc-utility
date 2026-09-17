@@ -2,7 +2,7 @@ import * as fs from "fs";
 import fetch from "node-fetch";
 import { getOAuthToken } from "../oauthTokenService/index";
 import { ResourceResponse } from "../types";
-import { fetchWithRetry } from "../utilities";
+import { fetchWithRetry ,fetchPatchWithRetry} from "../utilities";
 
 export async function downloadAllResourcesCSV(
   clientId: string,
@@ -193,6 +193,36 @@ export async function getResourcebyId(
       clientSecret,
       instanceUrl,
       token
+    );
+
+    return res.data;
+  };
+
+  return fetchResources(0, initialToken);
+}
+
+export async function updateResourcebyId(
+  resourceId: string,
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  initialToken = "",
+  payload: {}
+): Promise<ResourceResponse> {
+
+  const fetchResources = async (
+    offset: number,
+    token: string
+  ): Promise<ResourceResponse> => {
+    const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/resources/${encodeURIComponent(resourceId)}`;
+
+    const res: FetchWithRetryResult = await fetchPatchWithRetry(
+      url,
+      clientId,
+      clientSecret,
+      instanceUrl,
+      token,
+      payload
     );
 
     return res.data;
