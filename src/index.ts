@@ -23,9 +23,9 @@ export {
   downloadWorkZoneCSV
 } from './workZones';
 
-export { AllResources, downloadAllResourcesCSV, getResourcebyId, getworkSkillsOfResource } from './resources';
+export { AllResources, downloadAllResourcesCSV, getResourcebyId, getworkSkillsOfResource, updateResourcebyId} from './resources';
 
-export { downloadAllInactiveUsers, downloadAllInactiveUsersCSV, downloadAllUsersCSV, generateUsersCollaborationCSV } from './users';
+export { downloadAllInactiveUsers, downloadAllInactiveUsersCSV, downloadAllUsersCSV, generateUsersCollaborationCSV, getUserByLogin,updateUserbyLogin } from './users';
 
 export {
   downloadAllInventoryTypesCSV, getInventoryTypesDetail, updateCreateInventoryType
