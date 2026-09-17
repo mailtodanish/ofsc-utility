@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - version 1.0.46
 
 ### Added
+- add user management methods for standalone OFSC
 - Update version and add resource management APIs
 - version 1.0.47 and add resource APIs
 - release v1.0.44 with getResource function and updated keywords

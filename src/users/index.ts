@@ -2,7 +2,7 @@ import * as fs from "fs";
 import fetch from "node-fetch";
 import { getOAuthToken } from "../oauthTokenService/index";
 import { ResourceResponse } from "../types";
-import { parseOFSCDate } from "../utilities/index";
+import { fetchWithRetry, parseOFSCDate, fetchPatchWithRetry } from "../utilities/index";
 
 export async function downloadAllUsersCSV(
   clientId: string,
@@ -114,7 +114,8 @@ const OfscUserUtility = {
   generateUsersCollaborationCSV: require('./collaborationGroups').generateUsersCollaborationCSV,
   downloadAllUsersCSV,
   downloadAllInactiveUsersCSV,
-  downloadAllInactiveUsers
+  downloadAllInactiveUsers,
+  getUserByLogin
 };
 
 
@@ -353,5 +354,69 @@ export async function downloadAllInactiveUsers(
   console.log("-------------------------------------");
 
   return result;
+}
+
+interface FetchWithRetryResult {
+  data: any;
+  token: string;
+}
+// /rest/ofscCore/v1/users/{login}
+export async function getUserByLogin(
+  login: string,
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  initialToken = ""
+): Promise<any> {
+
+  const fetchUser = async (
+    offset: number,
+    token: string
+  ): Promise<any> => {
+    const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/users/${encodeURIComponent(login)}?offset=${offset}&limit=100`;
+
+    const res: FetchWithRetryResult = await fetchWithRetry(
+      url,
+      clientId,
+      clientSecret,
+      instanceUrl,
+      token
+    );
+
+    return res.data;
+  };
+
+  return fetchUser(0, initialToken);
+}
+
+
+export async function updateUserbyLogin(
+  login: string,
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  initialToken = "",
+  payload: {}
+): Promise<ResourceResponse> {
+
+  const fetchUser = async (
+    offset: number,
+    token: string
+  ): Promise<ResourceResponse> => {
+    const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/users/${encodeURIComponent(login)}`;
+
+    const res: FetchWithRetryResult = await fetchPatchWithRetry(
+      url,
+      clientId,
+      clientSecret,
+      instanceUrl,
+      token,
+      payload
+    );
+
+    return res.data;
+  };
+
+  return fetchUser(0, initialToken);
 }
 export default OfscUserUtility;

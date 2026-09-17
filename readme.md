@@ -8,6 +8,11 @@ This package exposes grouped API helpers for common OFSC operations, including:
 - export/download helpers
 - inventory and activity records
 - metadata file generation
+- user and resource operations for standalone OFSC environments
+
+> Note: User and resource-related methods are applicable exclusively to standalone OFSC environments and are not supported in Fusion OFSC.
+
+This library is intended for OFSC integrations where the standard OFSC REST APIs are available. The user and resource-related methods are designed for standalone OFSC deployments and should not be relied on for Fusion OFSC environments, where the underlying APIs and behavior can differ.
 
 ### Built-in resilience for OFSC's server errors
 
@@ -537,7 +542,86 @@ node scripts/test-download-inactive-users-data.js
 
 `INACTIVITY_THRESHOLD_DAYS` is optional in the test script and defaults to `14`.
 
+#### Get user by login
+
+`getUserByLogin` fetches a single user record by login name and returns the raw OFSC response payload.
+
+```js
+const user = await ofs.getUserByLogin(
+  "user@example.com",
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+
+console.log(user);
+```
+
+**Function signature**
+
+```ts
+getUserByLogin(
+  login: string,
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  initialToken?: string,
+): Promise<any>
+```
+
+Notes:
+
+- This method is intended for standalone OFSC environments.
+- The response is the raw OFSC user payload returned by the API.
+- `initialToken` is optional and can be reused if a bearer token is already available.
+
+#### Update user by login
+
+`updateUserbyLogin` updates a user record by login using a PATCH request.
+
+```js
+const payload = {
+  firstName: "Updated",
+  lastName: "User",
+  status: "ACTIVE",
+};
+
+const response = await ofs.updateUserbyLogin(
+  "user@example.com",
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  "",
+  payload,
+);
+
+console.log(response);
+```
+
+**Function signature**
+
+```ts
+updateUserbyLogin(
+  login: string,
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  initialToken?: string,
+  payload: object,
+): Promise<ResourceResponse>
+```
+
+Notes:
+
+- The payload is sent as a PATCH body to the OFSC user update endpoint.
+- It uses the same retry wrapper as the other OFSC API helpers.
+- This method is also intended for standalone OFSC usage and may not behave the same in Fusion OFSC.
+
 ### Resource related methods
+
+> Note: User and resource-related methods are applicable exclusively to standalone OFSC environments and are not supported in Fusion OFSC.
+
+These methods are for standalone OFSC environments only. If you are connecting to Fusion OFSC, the user- and resource-based APIs may not behave the same way, and the request/response structure may not match the standalone endpoints.
 
 #### Get all resources
 
