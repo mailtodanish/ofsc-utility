@@ -1,3 +1,4 @@
+import { getInventoryTypesDetail } from './inventoryTypes';
 
 // Export all methods grouped by category
 export * as Activity from './activities';
@@ -80,6 +81,12 @@ const OfscUtility = {
   AllResources: require('./activities').AllResources,
   getworkSkillsOfResource: require('./resources').getworkSkillsOfResource,
   getResource: require('./resources').getResourcebyId,
+  updateResourcebyId: require('./resources').updateResourcebyId,
+  getUserByLogin: require('./users').getUserByLogin,
+  updateUserbyLogin: require('./users').updateUserbyLogin,
+  downloadAllInactiveUsersCSV: require('./users').downloadAllInactiveUsersCSV,
+  downloadAllInactiveUsers: require('./users').downloadAllInactiveUsers,  
+  updateCreateInventoryType: require('./inventoryTypes').updateCreateInventoryType,
   createExcelFile: require('./utilities').createExcelFile
 };
 
