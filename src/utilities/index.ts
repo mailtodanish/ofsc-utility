@@ -768,3 +768,52 @@ export function parseOFSCDate(value: unknown): Date | null {
   const d = new Date(isoLike);
   return isNaN(d.getTime()) ? null : d;
 }
+
+
+const COLORS = {
+  reset: "\x1b[0m",
+
+  black: "\x1b[30m",
+  red: "\x1b[31m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  magenta: "\x1b[35m",
+  cyan: "\x1b[36m",
+  white: "\x1b[37m",
+
+  gray: "\x1b[90m",
+  brightRed: "\x1b[91m",
+  brightGreen: "\x1b[92m",
+  brightYellow: "\x1b[93m",
+  brightBlue: "\x1b[94m",
+  brightMagenta: "\x1b[95m",
+  brightCyan: "\x1b[96m",
+  brightWhite: "\x1b[97m",
+} as const;
+
+type Color = keyof typeof COLORS;
+
+const logColor = (message: string, color: Color): void => {
+  console.log(`${COLORS[color]}${message}${COLORS.reset}`);
+};
+
+export const log = {
+  black: (message: string): void => logColor(message, "black"),
+  red: (message: string): void => logColor(message, "red"),
+  green: (message: string): void => logColor(message, "green"),
+  yellow: (message: string): void => logColor(message, "yellow"),
+  blue: (message: string): void => logColor(message, "blue"),
+  magenta: (message: string): void => logColor(message, "magenta"),
+  cyan: (message: string): void => logColor(message, "cyan"),
+  white: (message: string): void => logColor(message, "white"),
+
+  gray: (message: string): void => logColor(message, "gray"),
+  brightRed: (message: string): void => logColor(message, "brightRed"),
+  brightGreen: (message: string): void => logColor(message, "brightGreen"),
+  brightYellow: (message: string): void => logColor(message, "brightYellow"),
+  brightBlue: (message: string): void => logColor(message, "brightBlue"),
+  brightMagenta: (message: string): void => logColor(message, "brightMagenta"),
+  brightCyan: (message: string): void => logColor(message, "brightCyan"),
+  brightWhite: (message: string): void => logColor(message, "brightWhite"),
+};

@@ -1,4 +1,4 @@
-import { fetchWithRetry, deleteWithRetry, fetchPostWithRetry } from "../utilities";
+import { fetchWithRetry, deleteWithRetry, fetchPostWithRetry, log } from "../utilities";
 
 export async function startActivity(
   clientId: string,
@@ -15,7 +15,7 @@ export async function startActivity(
 
   const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/${Number(activityId)}/custom-actions/start`;
 
-  console.log(`➡️ Fetching activity by ID: ${url}`);
+  log.blue(`Starting activity by ID: ${url}`);
 
   const response = await fetchPostWithRetry(url, clientId, clientSecret, instanceUrl, token, {});
 
@@ -37,7 +37,7 @@ export async function cancelActivity(
 
   const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/${Number(activityId)}/custom-actions/cancel`;
 
-  console.log(`➡️ Fetching activity by ID: ${url}`);
+  log.red(`Cancelling activity by ID: ${url}`);
 
   const response = await fetchPostWithRetry(url, clientId, clientSecret, instanceUrl, token,{});
 
@@ -60,7 +60,7 @@ export async function completeActivity(
 
   const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/${Number(activityId)}/custom-actions/complete`;
 
-  console.log(`Completing activity by ID: ${url}`);
+  log.green(`Completing activity by ID: ${url}`);
 
   const response = await fetchPostWithRetry(url, clientId, clientSecret, instanceUrl, token,{});
 
@@ -83,7 +83,7 @@ export async function deleteActivity(
 
   const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/${Number(activityId)}`;
 
-  console.log(`Deleting activity by ID: ${url}`);
+  log.yellow(`Deleting activity by ID: ${url}`);
 
   const response = await deleteWithRetry(url, clientId, clientSecret, instanceUrl, token);
 
