@@ -120,6 +120,123 @@ export const fetchWithRetry = async (
   }
 };
 
+export const deleteWithRetry = async (
+  url: string,
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+  token: string,
+  retries: number = 5,
+  baseDelay: number = 500
+): Promise<{ data: any; token: string }> => {
+  const doDelete = async (bearer: string) => {
+    return fetch(url, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${bearer}`,
+        Accept: "application/json"
+      }
+    });
+  };
+
+  console.log(`Deleting ${url}`);
+
+  let currentToken = token;
+  let tokenRefreshed = false;
+  let remainingRetries = retries;
+  let delay = baseDelay;
+
+  while (true) {
+    const res = await doDelete(currentToken);
+
+    // Token expired
+    if (res.status === 401 && !tokenRefreshed) {
+      console.warn("Token expired — renewing token…");
+
+      currentToken = await getOAuthToken(
+        clientId,
+        clientSecret,
+        instanceUrl
+      );
+
+      tokenRefreshed = true;
+      continue;
+    }
+
+    const responseText = await res.text();
+
+    const isNoRouteToHost =
+      res.status === 400 &&
+      responseText.includes("NoRouteToHostException");
+
+    const isRetryableStatus =
+      res.status === 400 ||
+      res.status === 429 ||
+      res.status === 502 ||
+      res.status === 503 ||
+      res.status === 504;
+
+    if (
+      (isRetryableStatus || isNoRouteToHost) &&
+      remainingRetries > 0
+    ) {
+      const retryAfter = res.headers.get("Retry-After");
+
+      let retryDelay = delay;
+
+      if (retryAfter) {
+        const retryAfterSeconds = Number(retryAfter);
+
+        if (!Number.isNaN(retryAfterSeconds)) {
+          retryDelay = retryAfterSeconds * 1000;
+        }
+      }
+
+      console.warn(
+        `Retrying DELETE in ${retryDelay}ms... (${remainingRetries} retries left)`
+      );
+
+      await new Promise(resolve =>
+        setTimeout(resolve, retryDelay)
+      );
+
+      remainingRetries--;
+      delay *= 2;
+
+      continue;
+    }
+
+    if (!res.ok) {
+      throw new Error(
+        `DELETE request failed: ${res.status} ${res.statusText}\n${responseText}`
+      );
+    }
+
+    // DELETE APIs commonly return 204 No Content
+    if (res.status === 204 || !responseText.trim()) {
+      return {
+        data: null,
+        token: currentToken
+      };
+    }
+
+    let data: any;
+
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      throw new Error(
+        `Invalid JSON response from ${url}\n${responseText}`
+      );
+    }
+
+    return {
+      data,
+      token: currentToken
+    };
+  }
+};
+
 export const fetchPatchWithRetry = async (
   url: string,
   clientId: string,

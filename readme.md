@@ -102,6 +102,94 @@ async function main() {
 main().catch(console.error);
 ```
 
+## Available exports
+
+The package exposes both top-level helpers and grouped namespaces. This list is validated against the actual exports in [src/index.ts](src/index.ts).
+
+### Top-level exports
+
+- `getOAuthToken`
+- `downloadWorkZoneCSV`
+- `generateAllOnHandInventoryOfAllResources`
+- `generateAllOnHandInventoryOfAllResourcesCSV`
+- `downloadAllResourcesCSV`
+- `AllResources`
+- `getResourcebyId`
+- `getworkSkillsOfResource`
+- `updateResourcebyId`
+- `downloadAllUsersCSV`
+- `downloadAllInactiveUsersCSV`
+- `downloadAllInactiveUsers`
+- `generateUsersCollaborationCSV`
+- `getUserByLogin`
+- `updateUserbyLogin`
+- `downloadAllInventoryTypesCSV`
+- `getInventoryTypesDetail`
+- `updateCreateInventoryType`
+- `getAllActivities`
+- `getActivitybyId`
+- `startActivity`
+- `cancelActivity`
+- `completeActivity`
+- `deleteActivity`
+- `getActivityCustomerInventories`
+- `createActivityCustomerInventories`
+- `downloadAllEventsOfDay`
+- `downloadAllEventsOfDayCSV`
+- `downloadAllEventsOfDLastTwoMinutes`
+- `downloadAllEventsOfLastOneHour`
+- `createExcelFile`
+- `createConfigurationFile`
+
+### Grouped exports
+
+The module-level namespace exports are:
+
+- `ofs.Activity`
+  - `getAllActivities`
+  - `getActivitybyId`
+  - `startActivity`
+  - `cancelActivity`
+  - `completeActivity`
+  - `deleteActivity`
+- `ofs.ActivityInventories`
+  - `getActivityCustomerInventories`
+  - `createActivityCustomerInventories`
+- `ofs.Events`
+  - `downloadAllEventsOfDay`
+  - `downloadAllEventsOfDayCSV`
+  - `downloadAllEventsOfDLastTwoMinutes`
+  - `downloadAllEventsOfLastOneHour`
+- `ofs.Inventory`
+  - `generateAllOnHandInventoryOfAllResources`
+  - `generateAllOnHandInventoryOfAllResourcesCSV`
+- `ofs.InventoryType`
+  - `downloadAllInventoryTypesCSV`
+  - `getInventoryTypesDetail`
+  - `updateCreateInventoryType`
+- `ofs.CreateConfigurationFile`
+  - `createConfigurationFile`
+- `ofs.OauthTokenService`
+  - `getOAuthToken`
+- `ofs.Resource`
+  - `AllResources`
+  - `downloadAllResourcesCSV`
+  - `getResourcebyId`
+  - `getworkSkillsOfResource`
+  - `updateResourcebyId`
+- `ofs.User`
+  - `downloadAllUsersCSV`
+  - `downloadAllInactiveUsersCSV`
+  - `downloadAllInactiveUsers`
+  - `generateUsersCollaborationCSV`
+  - `getUserByLogin`
+  - `updateUserbyLogin`
+- `ofs.Utilities`
+  - `createExcelFile`
+- `ofs.WorkZone`
+  - `downloadWorkZoneCSV`
+
+
 ## Complete Example
 
 This example shows a full CommonJS script that retrieves activity type metadata and prints the result.
@@ -759,8 +847,10 @@ This gives you a dynamic table definition based on the actual inventory row fiel
 
 ### Activity and inventory helpers
 
+The activity API supports both listing and lifecycle actions. Prefer the grouped namespace for organization:
+
 ```js
-const activities = await ofs.getAllActivities(
+const activities = await ofs.Activity.getAllActivities(
   process.env.CLIENT_ID,
   process.env.CLIENT_SECRET,
   process.env.INSTANCE_NAME,
@@ -769,13 +859,61 @@ const activities = await ofs.getAllActivities(
   "2025-11-30",
   "status=='pending'",
   "activityId,activityType,date,status",
+  true,
 );
 
-const activityData = await ofs.getActivitybyId(
+const activityData = await ofs.Activity.getActivitybyId(
   process.env.CLIENT_ID,
   process.env.CLIENT_SECRET,
   process.env.INSTANCE_NAME,
-  "ACTIVITY_ID",
+  123456,
+);
+
+await ofs.Activity.startActivity(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  123456,
+);
+
+await ofs.Activity.completeActivity(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  123456,
+);
+
+await ofs.Activity.cancelActivity(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  123456,
+);
+
+await ofs.Activity.deleteActivity(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  123456,
+);
+
+const customerInventories = await ofs.ActivityInventories.getActivityCustomerInventories(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  123456,
+);
+
+const createdInventory = await ofs.ActivityInventories.createActivityCustomerInventories(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  123456,
+  {
+    code: "INV-1001",
+    quantity: 1,
+    status: "active",
+  },
 );
 
 const inventoryDetail = await ofs.InventoryType.getInventoryTypesDetail(
@@ -784,6 +922,28 @@ const inventoryDetail = await ofs.InventoryType.getInventoryTypesDetail(
   process.env.INSTANCE_NAME,
   "inventory_label",
 );
+```
+
+### Activity lifecycle actions
+
+The activity action helpers let you transition an OFSC activity through its standard custom actions:
+
+- `startActivity(clientId, clientSecret, instanceUrl, activityId)`
+- `completeActivity(clientId, clientSecret, instanceUrl, activityId)`
+- `cancelActivity(clientId, clientSecret, instanceUrl, activityId)`
+- `deleteActivity(clientId, clientSecret, instanceUrl, activityId)`
+
+Example:
+
+```js
+const started = await ofs.Activity.startActivity(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  123456,
+);
+
+console.log(started.data);
 ```
 
 ### Create a configuration workbook
@@ -842,43 +1002,37 @@ await ofs.User.generateUsersCollaborationCSV(
 );
 ```
 
-## Available exports
 
-Top-level exports include:
+### Default export object
 
-- `getOAuthToken`
-- `downloadWorkZoneCSV`
-- `downloadAllResourcesCSV`
-- `getResource`
-- `downloadAllUsersCSV`
-- `downloadAllInactiveUsersCSV`
-- `generateAllOnHandInventoryOfAllResourcesCSV`
-- `generateAllOnHandInventoryOfAllResources`
-- `downloadAllInventoryTypesCSV`
-- `getInventoryTypesDetail`
-- `updateCreateInventoryType`
-- `getAllActivities`
-- `getActivitybyId`
-- `getActivityCustomerInventories`
-- `createActivityCustomerInventories`
-- `downloadAllEventsOfDay`
-- `downloadAllEventsOfDayCSV`
-- `createExcelFile`
-- `createConfigurationFile`
+The default export object exposes the same functions in a single object, with the metadata helpers grouped under `metadata`:
 
-Grouped exports include:
+```js
+const ofs = require("ofsc-utility");
 
-- `ofs.Activity`
-- `ofs.ActivityInventories`
-- `ofs.Events`
-- `ofs.Inventory`
-- `ofs.InventoryType`
-- `ofs.OauthTokenService`
-- `ofs.Resource`
-- `ofs.User`
-- `ofs.Utilities`
-- `ofs.WorkZone`
-- `ofs.metadata`
+const activities = await ofs.Activity.getAllActivities(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  "US",
+  "2025-11-01",
+  "2025-11-30",
+);
+
+await ofs.Activity.startActivity(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  123456,
+);
+
+const meta = ofs.metadata;
+const activityTypes = await meta.getActivityTypesMetaData(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+```
 
 ## Metadata namespace
 

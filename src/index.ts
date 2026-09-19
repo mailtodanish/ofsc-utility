@@ -32,7 +32,7 @@ export {
   downloadAllInventoryTypesCSV, getInventoryTypesDetail, updateCreateInventoryType
 } from './inventoryTypes';
 
-export { getActivitybyId, getAllActivities } from './activities';
+export { getActivitybyId, getAllActivities, startActivity, cancelActivity, completeActivity, deleteActivity } from './activities';
 
 export { createActivityCustomerInventories, getActivityCustomerInventories } from './activityInventories';
 
@@ -52,9 +52,17 @@ const OfscUtility = {
   downloadAllInventoryTypesCSV: require('./inventoryTypes').downloadAllInventoryTypesCSV,
   getInventoryTypesDetail: require('./inventoryTypes').getInventoryTypesDetail,
   updateInventoryType: require('./inventoryTypes').updateInventoryType,
-  getAllActivities: require('./activities').getAllActivities,
-  getActivityCustomerInventories: require('./activityInventories').getActivityCustomerInventories,
-  createActivityCustomerInventories: require('./activityInventories').createActivityCustomerInventories,
+  Activity: {
+    getAllActivities: require('./activities').getAllActivities,
+    getActivitybyId: require('./activities').getActivitybyId,
+    startActivity: require('./activities').startActivity,
+    cancelActivity: require('./activities').cancelActivity,
+    completeActivity: require('./activities').completeActivity,
+    deleteActivity: require('./activities').deleteActivity,
+    getActivityCustomerInventories: require('./activityInventories').getActivityCustomerInventories,
+    createActivityCustomerInventories: require('./activityInventories').createActivityCustomerInventories,
+  },
+  
   metadata: {
     getActivityTypesMetaData: require('./metadata').getActivityTypesMetaData,
     getActivityTypesGroupsMetaData: require('./metadata').getActivityTypesGroupsMetaData,
@@ -77,8 +85,7 @@ const OfscUtility = {
   downloadAllEventsOfLastOneHour: require('./events').downloadAllEventsOfLastOneHour,
   generateUsersCollaborationCSV: require('./users').generateUsersCollaborationCSV,
   generateAllOnHandInventoryOfAllResourcesCSV: require('./inventory').generateAllOnHandInventoryOfAllResourcesCSV,
-  getActivitybyId: require('./activities').getActivitybyId,
-  AllResources: require('./activities').AllResources,
+  AllResources: require('./resources').AllResources,
   getworkSkillsOfResource: require('./resources').getworkSkillsOfResource,
   getResource: require('./resources').getResourcebyId,
   updateResourcebyId: require('./resources').updateResourcebyId,
