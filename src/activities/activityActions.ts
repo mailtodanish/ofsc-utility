@@ -1,4 +1,4 @@
-import { fetchWithRetry, deleteWithRetry } from "../utilities";
+import { fetchWithRetry, deleteWithRetry, fetchPostWithRetry } from "../utilities";
 
 export async function startActivity(
   clientId: string,
@@ -17,7 +17,7 @@ export async function startActivity(
 
   console.log(`➡️ Fetching activity by ID: ${url}`);
 
-  const response = await fetchWithRetry(url, clientId, clientSecret, instanceUrl, token);
+  const response = await fetchPostWithRetry(url, clientId, clientSecret, instanceUrl, token, {});
 
   return response;
 
@@ -39,7 +39,7 @@ export async function cancelActivity(
 
   console.log(`➡️ Fetching activity by ID: ${url}`);
 
-  const response = await fetchWithRetry(url, clientId, clientSecret, instanceUrl, token);
+  const response = await fetchPostWithRetry(url, clientId, clientSecret, instanceUrl, token,{});
 
   return response;
 
@@ -62,7 +62,7 @@ export async function completeActivity(
 
   console.log(`Completing activity by ID: ${url}`);
 
-  const response = await fetchWithRetry(url, clientId, clientSecret, instanceUrl, token);
+  const response = await fetchPostWithRetry(url, clientId, clientSecret, instanceUrl, token,{});
 
   return response;
 
