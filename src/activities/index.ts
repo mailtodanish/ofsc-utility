@@ -1,8 +1,8 @@
 import { getOAuthToken } from "../oauthTokenService";
-import { fetchWithRetry } from "../utilities";
+import { fetchWithRetry, log } from "../utilities";
 
 
-export { startActivity, cancelActivity,completeActivity, deleteActivity } from "./activityActions";
+export { startActivity, cancelActivity, completeActivity, deleteActivity } from "./activityActions";
 
 // Validate YYYY-MM-DD format
 const isValidDate = (date: string): boolean =>
@@ -62,21 +62,21 @@ export async function getAllActivities(
         if (includeNonScheduled) params.append("includeNonScheduled", "true");
 
         const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/?${params.toString()}`;
-        console.error(url);
+        log.red(url);
 
-        console.log(`➡️ Fetching offset=${offset}, limit=${limit}`);
+        log.brightBlue(`➡️ Fetching offset=${offset}, limit=${limit}`);
 
         const response = await fetchWithRetry(url, clientId, clientSecret, instanceUrl, token);
 
         const data = response.data;
 
         if (!data.items || data.items.length === 0) {
-            console.log("✔ No more items found. Stopping pagination.");
+            log.yellow("✔ No more items found. Stopping pagination.");
             break;
         }
 
         allItems.push(...data.items);
-        console.log(`   ✔ Received ${data.items.length} items (Total: ${allItems.length})`);
+        log.yellow(`   ✔ Received ${data.items.length} items (Total: ${allItems.length})`);
         limit = data.limit;
         offset += limit;
     }
@@ -89,17 +89,17 @@ export async function getActivitybyId(
     clientSecret: string,
     instanceUrl: string,
     activityId: number,
-    token: string=""
+    token: string = ""
 
 ): Promise<{ token: string; data: any }> {
 
     const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/${Number(activityId)}/`;
 
-    console.log(`➡️ Fetching activity by ID: ${url}`);
+    log.brightBlue(`➡️ Fetching activity by ID: ${url}`);
 
     const response = await fetchWithRetry(url, clientId, clientSecret, instanceUrl, token);
 
-    return    response;
+    return response;
 
 }
 
@@ -111,7 +111,7 @@ export async function getAllNonScheduledActivities(
     fields?: string,
 ): Promise<any[]> {
 
-    if(!rootBucket) {
+    if (!rootBucket) {
         throw new Error("The 'rootBucket' parameter is required to fetch non-scheduled activities.");
     }
 
@@ -130,30 +130,165 @@ export async function getAllNonScheduledActivities(
             limit: limit.toString()
         });
 
-      
+
         if (rootBucket) params.append("resources", rootBucket);
         if (fields) params.append("fields", fields);
         params.append("includeNonScheduled", "true");
 
         const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/?${params.toString()}`;
-        console.error(url);
+        log.red(url);
 
-        console.log(` Fetching Non Scheduled Activities: offset=${offset}, limit=${limit}`);
+        log.yellow(` Fetching Non Scheduled Activities: offset=${offset}, limit=${limit}`);
 
         const response = await fetchWithRetry(url, clientId, clientSecret, instanceUrl, token);
 
         const data = response.data;
 
         if (!data.items || data.items.length === 0 || data.hasMore === false) {
-            console.log("No more items found. Stopping pagination.");
+            log.yellow("No more items found. Stopping pagination.");
             break;
         }
 
         allItems.push(...data.items);
-        console.log(`Received ${data.items.length} items (Total: ${allItems.length})`);
+        log.yellow(`Received ${data.items.length} items (Total: ${allItems.length})`);
         limit = data.limit;
         offset += limit;
     }
 
     return allItems;
+}
+
+export async function getAllScheduledActivities(
+    clientId: string,
+    clientSecret: string,
+    instanceUrl: string,
+    rootBucket: string,
+): Promise<any[]> {
+
+    const limit = 1000;
+    const allItems: any[] = [];
+
+    const token = await getOAuthToken(
+        clientId,
+        clientSecret,
+        instanceUrl
+    );
+
+    // Start from today
+    let dateTo = new Date();
+
+    // Date range loop
+    dateRangeLoop:
+    while (true) {
+
+
+        const dateFrom = new Date(dateTo);
+        dateFrom.setDate(dateFrom.getDate() - 31);
+
+        const dateFromStr = formatDate(dateFrom);
+        const dateToStr = formatDate(dateTo);
+
+        log.brightBlue(
+            `\nDate Range: ${dateFromStr} → ${dateToStr}`
+        );
+
+        let offset = 0;
+
+
+        while (true) {
+
+            const params = new URLSearchParams({
+                offset: offset.toString(),
+                limit: limit.toString(),
+                dateFrom: dateFromStr,
+                dateTo: dateToStr,
+                includeNonScheduled: "false",
+            });
+
+            if (rootBucket) {
+                params.append("resources", rootBucket);
+            }
+
+            const url =
+                `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/?${params.toString()}`;
+
+            log.yellow(
+                `API: dateFrom=${dateFromStr}, dateTo=${dateToStr}, offset=${offset}`
+            );
+
+            const response = await fetchWithRetry(
+                url,
+                clientId,
+                clientSecret,
+                instanceUrl,
+                token
+            );
+
+            const data = response.data;
+
+
+            if (!data.items || data.items.length === 0) {
+                log.green(
+                    "✔ No items found. Stopping all processing."
+                );
+
+                break dateRangeLoop;
+            }
+
+            // Add items
+            allItems.push(...data.items);
+
+            log.yellow(
+                `✔ Received ${data.items.length} items`
+            );
+
+            log.yellow(
+                `✔ Total items: ${allItems.length}`
+            );
+
+            log.yellow(
+                `✔ hasMore: ${data.hasMore}`
+            );
+
+
+
+            if (data.hasMore === true) {
+
+                // More pages available for SAME date range
+                offset += data.items.length;
+
+                log.yellow(
+                    `➡️ More data available. Next offset=${offset}`
+                );
+
+                continue;
+            }
+
+
+
+            log.yellow(
+                `✔ Date range completed: ${dateFromStr} → ${dateToStr}`
+            );
+
+            break;
+        }
+
+
+
+        dateTo = new Date(dateFrom);
+
+        log.yellow(
+            `⬅️ Moving to previous date range. New dateTo=${formatDate(dateTo)}`
+        );
+    }
+
+    return allItems;
+}
+
+
+/**
+ * Format Date as YYYY-MM-DD
+ */
+function formatDate(date: Date): string {
+    return date.toISOString().split("T")[0];
 }

@@ -32,7 +32,7 @@ export {
   downloadAllInventoryTypesCSV, getInventoryTypesDetail, updateCreateInventoryType
 } from './inventoryTypes';
 
-export { getActivitybyId, getAllActivities, startActivity, cancelActivity, completeActivity, deleteActivity, getAllNonScheduledActivities } from './activities';
+export { getActivitybyId, getAllActivities, getAllScheduledActivities, startActivity, cancelActivity, completeActivity, deleteActivity, getAllNonScheduledActivities } from './activities';
 
 export { createActivityCustomerInventories, getActivityCustomerInventories } from './activityInventories';
 
@@ -54,6 +54,7 @@ const OfscUtility = {
   updateInventoryType: require('./inventoryTypes').updateInventoryType,
   Activity: {
     getAllActivities: require('./activities').getAllActivities,
+    getAllScheduledActivities: require('./activities').getAllScheduledActivities,
     getAllNonScheduledActivities: require('./activities').getAllNonScheduledActivities,
     getActivitybyId: require('./activities').getActivitybyId,
     startActivity: require('./activities').startActivity,

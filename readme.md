@@ -127,6 +127,7 @@ The package exposes both top-level helpers and grouped namespaces. This list is 
 - `getInventoryTypesDetail`
 - `updateCreateInventoryType`
 - `getAllActivities`
+- `getAllScheduledActivities`
 - `getAllNonScheduledActivities`
 - `getActivitybyId`
 - `startActivity`
@@ -148,6 +149,7 @@ The module-level namespace exports are:
 
 - `ofs.Activity`
   - `getAllActivities`
+  - `getAllScheduledActivities`
   - `getAllNonScheduledActivities`
   - `getActivitybyId`
   - `startActivity`
@@ -871,6 +873,13 @@ const activityData = await ofs.Activity.getActivitybyId(
   123456,
 );
 
+const scheduledActivities = await ofs.Activity.getAllScheduledActivities(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  "US",
+);
+
 const nonScheduledActivities = await ofs.Activity.getAllNonScheduledActivities(
   process.env.CLIENT_ID,
   process.env.CLIENT_SECRET,
@@ -879,6 +888,7 @@ const nonScheduledActivities = await ofs.Activity.getAllNonScheduledActivities(
   "activityId,activityType,status",
 );
 
+console.log("Scheduled activities:", scheduledActivities.length);
 console.log("Non-scheduled activities:", nonScheduledActivities.length);
 
 await ofs.Activity.startActivity(
@@ -938,8 +948,9 @@ const inventoryDetail = await ofs.InventoryType.getInventoryTypesDetail(
 
 ### Activity lifecycle actions
 
-The activity action helpers let you transition an OFSC activity through its standard custom actions and list non-scheduled activity work:
+The activity helper set lets you query scheduled and non-scheduled activity work, then transition an OFSC activity through its standard lifecycle actions:
 
+- `getAllScheduledActivities(clientId, clientSecret, instanceUrl, rootBucket)`
 - `getAllNonScheduledActivities(clientId, clientSecret, instanceUrl, resources, fields?)`
 - `startActivity(clientId, clientSecret, instanceUrl, activityId)`
 - `completeActivity(clientId, clientSecret, instanceUrl, activityId)`
@@ -949,7 +960,21 @@ The activity action helpers let you transition an OFSC activity through its stan
 Example:
 
 ```js
-let rootBucket="US";
+let rootBucket = "US";
+const scheduled = await ofs.Activity.getAllScheduledActivities(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  rootBucket,
+);
+
+console.log("Scheduled activities:", scheduled.length);
+```
+
+Example:
+
+```js
+let rootBucket = "US";
 const nonScheduled = await ofs.Activity.getAllNonScheduledActivities(
   process.env.CLIENT_ID,
   process.env.CLIENT_SECRET,
