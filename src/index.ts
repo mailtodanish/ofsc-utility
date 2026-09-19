@@ -32,7 +32,7 @@ export {
   downloadAllInventoryTypesCSV, getInventoryTypesDetail, updateCreateInventoryType
 } from './inventoryTypes';
 
-export { getActivitybyId, getAllActivities, startActivity, cancelActivity, completeActivity, deleteActivity } from './activities';
+export { getActivitybyId, getAllActivities, startActivity, cancelActivity, completeActivity, deleteActivity, getAllNonScheduledActivities } from './activities';
 
 export { createActivityCustomerInventories, getActivityCustomerInventories } from './activityInventories';
 
@@ -54,6 +54,7 @@ const OfscUtility = {
   updateInventoryType: require('./inventoryTypes').updateInventoryType,
   Activity: {
     getAllActivities: require('./activities').getAllActivities,
+    getAllNonScheduledActivities: require('./activities').getAllNonScheduledActivities,
     getActivitybyId: require('./activities').getActivitybyId,
     startActivity: require('./activities').startActivity,
     cancelActivity: require('./activities').cancelActivity,
@@ -85,6 +86,7 @@ const OfscUtility = {
   downloadAllEventsOfLastOneHour: require('./events').downloadAllEventsOfLastOneHour,
   generateUsersCollaborationCSV: require('./users').generateUsersCollaborationCSV,
   generateAllOnHandInventoryOfAllResourcesCSV: require('./inventory').generateAllOnHandInventoryOfAllResourcesCSV,
+  getAllNonScheduledActivities: require('./activities').getAllNonScheduledActivities,
   AllResources: require('./resources').AllResources,
   getworkSkillsOfResource: require('./resources').getworkSkillsOfResource,
   getResource: require('./resources').getResourcebyId,

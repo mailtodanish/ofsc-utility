@@ -127,6 +127,7 @@ The package exposes both top-level helpers and grouped namespaces. This list is 
 - `getInventoryTypesDetail`
 - `updateCreateInventoryType`
 - `getAllActivities`
+- `getAllNonScheduledActivities`
 - `getActivitybyId`
 - `startActivity`
 - `cancelActivity`
@@ -147,6 +148,7 @@ The module-level namespace exports are:
 
 - `ofs.Activity`
   - `getAllActivities`
+  - `getAllNonScheduledActivities`
   - `getActivitybyId`
   - `startActivity`
   - `cancelActivity`
@@ -869,6 +871,16 @@ const activityData = await ofs.Activity.getActivitybyId(
   123456,
 );
 
+const nonScheduledActivities = await ofs.Activity.getAllNonScheduledActivities(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  "US",
+  "activityId,activityType,status",
+);
+
+console.log("Non-scheduled activities:", nonScheduledActivities.length);
+
 await ofs.Activity.startActivity(
   process.env.CLIENT_ID,
   process.env.CLIENT_SECRET,
@@ -926,12 +938,28 @@ const inventoryDetail = await ofs.InventoryType.getInventoryTypesDetail(
 
 ### Activity lifecycle actions
 
-The activity action helpers let you transition an OFSC activity through its standard custom actions:
+The activity action helpers let you transition an OFSC activity through its standard custom actions and list non-scheduled activity work:
 
+- `getAllNonScheduledActivities(clientId, clientSecret, instanceUrl, resources, fields?)`
 - `startActivity(clientId, clientSecret, instanceUrl, activityId)`
 - `completeActivity(clientId, clientSecret, instanceUrl, activityId)`
 - `cancelActivity(clientId, clientSecret, instanceUrl, activityId)`
 - `deleteActivity(clientId, clientSecret, instanceUrl, activityId)`
+
+Example:
+
+```js
+let rootBucket="US";
+const nonScheduled = await ofs.Activity.getAllNonScheduledActivities(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  rootBucket,
+  "activityId,activityType,date,status",
+);
+
+console.log(nonScheduled.length);
+```
 
 Example:
 

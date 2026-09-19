@@ -102,3 +102,58 @@ export async function getActivitybyId(
     return    response;
 
 }
+
+export async function getAllNonScheduledActivities(
+    clientId: string,
+    clientSecret: string,
+    instanceUrl: string,
+    rootBucket: string,
+    fields?: string,
+): Promise<any[]> {
+
+    if(!rootBucket) {
+        throw new Error("The 'rootBucket' parameter is required to fetch non-scheduled activities.");
+    }
+
+    let limit = 1000;
+    let offset = 0;
+
+    const allItems: any[] = [];
+
+    // Prepare reusable token
+    const token = await getOAuthToken(clientId, clientSecret, instanceUrl);
+
+    while (true) {
+        // Build URL cleanly
+        const params = new URLSearchParams({
+            offset: offset.toString(),
+            limit: limit.toString()
+        });
+
+      
+        if (rootBucket) params.append("resources", rootBucket);
+        if (fields) params.append("fields", fields);
+        params.append("includeNonScheduled", "true");
+
+        const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/activities/?${params.toString()}`;
+        console.error(url);
+
+        console.log(` Fetching Non Scheduled Activities: offset=${offset}, limit=${limit}`);
+
+        const response = await fetchWithRetry(url, clientId, clientSecret, instanceUrl, token);
+
+        const data = response.data;
+
+        if (!data.items || data.items.length === 0 || data.hasMore === false) {
+            console.log("No more items found. Stopping pagination.");
+            break;
+        }
+
+        allItems.push(...data.items);
+        console.log(`Received ${data.items.length} items (Total: ${allItems.length})`);
+        limit = data.limit;
+        offset += limit;
+    }
+
+    return allItems;
+}
