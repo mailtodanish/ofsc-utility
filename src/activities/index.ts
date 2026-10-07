@@ -203,6 +203,7 @@ export async function getAllScheduledActivities(
                 dateFrom: dateFromStr,
                 dateTo: dateToStr,
                 includeNonScheduled: "false",
+                fields:"status,activityId,activityType,date,resourceId,customerName"
             });
 
             if (rootBucket) {

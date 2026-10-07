@@ -26,7 +26,7 @@ export {
 
 export { AllResources, downloadAllResourcesCSV, getResourcebyId, getworkSkillsOfResource, updateResourcebyId} from './resources';
 
-export { downloadAllInactiveUsers, downloadAllInactiveUsersCSV, downloadAllUsersCSV, generateUsersCollaborationCSV, getUserByLogin,updateUserbyLogin } from './users';
+export { downloadAllInactiveUsers, downloadAllInactiveUsersCSV, downloadAllUsersCSV, generateUsersCollaborationCSV, getUserByLogin,updateUserbyLogin, downloadAllUsers } from './users';
 
 export {
   downloadAllInventoryTypesCSV, getInventoryTypesDetail, updateCreateInventoryType

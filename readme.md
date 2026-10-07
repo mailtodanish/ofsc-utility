@@ -117,6 +117,7 @@ The package exposes both top-level helpers and grouped namespaces. This list is 
 - `getResourcebyId`
 - `getworkSkillsOfResource`
 - `updateResourcebyId`
+- `downloadAllUsers`
 - `downloadAllUsersCSV`
 - `downloadAllInactiveUsersCSV`
 - `downloadAllInactiveUsers`
@@ -182,6 +183,7 @@ The module-level namespace exports are:
   - `getworkSkillsOfResource`
   - `updateResourcebyId`
 - `ofs.User`
+  - `downloadAllUsers`
   - `downloadAllUsersCSV`
   - `downloadAllInactiveUsersCSV`
   - `downloadAllInactiveUsers`
@@ -471,6 +473,75 @@ const workSkills = await ofs.getworkSkillsOfResource(
 
 console.log("Resource:", resource);
 console.log("Work skills:", workSkills.data);
+```
+
+#### Download all users
+
+`downloadAllUsers` retrieves every user from the OFSC Users API and returns the
+results as an array of plain objects. The method automatically follows the API
+pagination and does not create a CSV file.
+
+```js
+const ofs = require("ofsc-utility");
+
+async function downloadUsers() {
+  const users = await ofs.downloadAllUsers(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    process.env.INSTANCE_URL,
+  );
+
+  console.log(`Downloaded ${users.length} users.`);
+  console.log(users[0]);
+}
+
+downloadUsers().catch((error) => {
+  console.error("Failed to download users:", error);
+  process.exit(1);
+});
+```
+
+Or, use the grouped namespace:
+
+```js
+const users = await ofs.User.downloadAllUsers(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_URL,
+);
+```
+
+**Function signature**
+
+```ts
+downloadAllUsers(
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string,
+): Promise<any[]>
+```
+
+**Parameters and result**
+
+- `clientId`: OFSC OAuth client ID.
+- `clientSecret`: OFSC OAuth client secret.
+- `instanceUrl`: OFSC instance name only, such as `mycompany`. Do not include
+  `https://` or `.fs.ocs.oraclecloud.com`.
+- The returned array contains every user returned by the API pages. Each user is
+  represented as a plain object.
+
+The helper retrieves users in pages of 100 records and requires valid OFSC API
+credentials. It obtains an OAuth token for each page and returns the combined
+results after the final page is reached.
+
+To run the repository test script against a built distribution:
+
+```bash
+npm run build
+export CLIENT_ID=yourClientId
+export CLIENT_SECRET=yourClientSecret
+export INSTANCE_URL=yourInstanceName
+node scripts/test-download-all-users.js
 ```
 
 #### Download inactive users

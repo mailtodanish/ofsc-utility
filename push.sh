@@ -27,7 +27,7 @@ set -euo pipefail
 
 # ---------- defaults ----------
 OLLAMA_HOST="${OLLAMA_HOST:-http://localhost:11434}"
-OLLAMA_MODEL="${OLLAMA_MODEL:-qwen3:8b}"
+OLLAMA_MODEL="${OLLAMA_MODEL:-qwen2.5-coder:3b}"
 MANUAL_MESSAGE=""
 DRY_RUN=false
 TARGET_BRANCH=""

@@ -104,6 +104,55 @@ export async function downloadAllUsersCSV(
   console.log("-------------------------------------");
 }
 
+export async function downloadAllUsers(
+  clientId: string,
+  clientSecret: string,
+  instanceUrl: string
+): Promise<any[]> {
+
+  let offset = 0;
+  const limit = 100;
+
+  let allItems: any[] = [];
+  let totalFetched = 0;
+
+  console.log("Starting users download...");
+  console.log("-------------------------------------");
+
+  while (true) {
+    const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscCore/v1/users/?offset=${offset}&limit=${limit}`;
+
+    const token = await getOAuthToken(clientId, clientSecret, instanceUrl);
+
+    console.log(`Fetching offset=${offset} limit=${limit}`);
+
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json"
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
+    }
+
+    const data = (await res.json()) as ResourceResponse;
+
+    allItems.push(...data.items);
+    totalFetched += data.items.length;
+
+    console.log(`   Received ${data.items.length} items (Total: ${totalFetched})`);
+
+    if (offset + limit >= data.totalResults) break;
+
+    offset += limit;
+  }
+
+  return allItems;
+}
+
 
 export {
   generateUsersCollaborationCSV
@@ -115,7 +164,8 @@ const OfscUserUtility = {
   downloadAllUsersCSV,
   downloadAllInactiveUsersCSV,
   downloadAllInactiveUsers,
-  getUserByLogin
+  getUserByLogin,
+  downloadAllUsers
 };
 
 
