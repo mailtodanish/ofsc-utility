@@ -12,6 +12,7 @@ export * as Resource from './resources';
 export * as User from './users';
 export * as Utilities from './utilities';
 export * as WorkZone from './workZones';
+
 // Export types
 export * from './types';
 
@@ -40,7 +41,7 @@ export { downloadAllEventsOfDay, downloadAllEventsOfDayCSV, downloadAllEventsOfD
 
 export { createExcelFile } from './utilities';
 
-export { createConfigurationFile, getPropertiesMetaData, getPropertyMetaData } from './metadata';
+export { createConfigurationFile, getPropertiesMetaData, getPropertyMetaData,updatePropertyEnum } from './metadata';
 
 
 // Default export with all functionality
@@ -74,6 +75,7 @@ const OfscUtility = {
     getInventoryTypesMetaData: require('./metadata').getInventoryTypesMetaData,
     getPropertiesMetaData: require('./metadata').getPropertiesMetaData,
     getPropertyMetaData: require('./metadata').getPropertyMetaData,
+    updatePropertyEnum: require('./metadata').updatePropertyEnum,
     getResourceTypesMetaData: require('./metadata').getResourceTypesMetaData,
     getShiftMetaData: require('./metadata').getShiftMetaData,
     getTimeSlotsMetaData: require('./metadata').getTimeSlotsMetaData,

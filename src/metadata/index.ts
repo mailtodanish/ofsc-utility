@@ -15,6 +15,7 @@ import * as TimeSlots from "./timeSlots";
 import * as WorkSkills from "./workSkillConditions";
 import * as WorkZoneKey from "./workZoneKey";
 import * as WorkZone from "./workZones";
+import * as Enum from "./enumerations"
 
 export { getActivityTypesGroupsMetaData } from './activityTypeGroup';
 export { getActivityTypesMetaData } from './activityTypes';
@@ -22,13 +23,14 @@ export { getApplictaionsIntegrationsDetailMetaData } from './applictaionsIntegra
 export { getCapacityMetaData } from './capacity';
 export { getFormsMetaData } from './form';
 export { getInventoryTypesMetaData } from './inventoryTypes';
-export { getPropertiesMetaData, getPropertyMetaData } from './properties';
+export { getPropertiesMetaData, getPropertyMetaData,  } from './properties';
 export { getResourceTypesMetaData } from './resourceTypes';
 export { getShiftMetaData } from './shifts';
 export { getTimeSlotsMetaData } from './timeSlots';
 export { getWorkSkillsMetaData } from './workSkillConditions';
 export { getWorkZoneKeyMetaData } from './workZoneKey';
 export { getWorkZonesMetaData } from './workZones';
+export {updatePropertyEnum} from "./enumerations"
 
 export async function createConfigurationFile(
     clientId: string,

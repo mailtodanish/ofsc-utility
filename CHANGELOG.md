@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Refactor logging to use colored output and update version
 
 ### Maintenance
+- added new method to update enum of a property
 - new method downloadAllUsers is added
 - Bump version to 1.0.54 and update API calls to use fetchPostWithRetry
 - version 1.0.46

@@ -1,0 +1,15 @@
+{
+    "items": [
+        {
+            "label": "DATABASE_CONNECTION_ERROR",
+            "active": true,
+            "translations": [
+                {
+                    "language": "en",
+                    "name": "Database Connection Error",
+                    "languageISO": "en-US"
+                }
+            ]
+        }
+    ]
+}

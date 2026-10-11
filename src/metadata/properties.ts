@@ -1,5 +1,5 @@
 import { fetchWithRetry } from "../utilities";
-import { getPropertiesDropDownMetaData,getPropertiesEnum } from "./enumerations";
+import { getPropertiesDropDownMetaData, getPropertyEnum } from "./enumerations";
 type SheetData = Record<string, any[]>;
 
 /**
@@ -116,7 +116,7 @@ export async function getPropertyMetaData(
     
     return {
         data: res.data,
-        enums: res.data.type=="enumeration"? await getPropertiesEnum(
+        enums: res.data.type=="enumeration"? await getPropertyEnum(
                 clientId, clientSecret, instanceUrl, normalizedLabel, token) :[]
     }
 }

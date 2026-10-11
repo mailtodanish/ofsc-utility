@@ -1,6 +1,58 @@
-import { fetchWithRetry } from "../utilities";
+import { fetchWithRetry,fetchPutWithRetry } from "../utilities";
 
 type SheetData = Record<string, any[]>;
+
+export interface PropertyEnumPayload {
+    items: Array<{
+        label: string;
+        active: boolean;
+        translations: Array<{
+            language: string;
+            name: string;
+            languageISO: string;
+        }>;
+    }>;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function validatePropertyEnumPayload(payload: unknown): asserts payload is PropertyEnumPayload {
+    if (!isRecord(payload) || !Array.isArray(payload.items)) {
+        throw new Error("payload must be an object with an 'items' array.");
+    }
+
+    payload.items.forEach((item, itemIndex) => {
+        if (!isRecord(item)) {
+            throw new Error(`payload.items[${itemIndex}] must be an object.`);
+        }
+        if (typeof item.label !== "string") {
+            throw new Error(`payload.items[${itemIndex}].label must be a string.`);
+        }
+        if (typeof item.active !== "boolean") {
+            throw new Error(`payload.items[${itemIndex}].active must be a boolean.`);
+        }
+        if (!Array.isArray(item.translations)) {
+            throw new Error(`payload.items[${itemIndex}].translations must be an array.`);
+        }
+
+        item.translations.forEach((translation, translationIndex) => {
+            if (!isRecord(translation)) {
+                throw new Error(
+                    `payload.items[${itemIndex}].translations[${translationIndex}] must be an object.`
+                );
+            }
+            for (const field of ["language", "name", "languageISO"]) {
+                if (typeof translation[field] !== "string") {
+                    throw new Error(
+                        `payload.items[${itemIndex}].translations[${translationIndex}].${field} must be a string.`
+                    );
+                }
+            }
+        });
+    });
+}
 
 /**
  * Fetch enumeration metadata for a specific property label.
@@ -99,7 +151,7 @@ export async function transformData(
 
 
 
-export async function getPropertiesEnum(
+export async function getPropertyEnum(
     clientId: string,
     clientSecret: string,
     instanceUrl: string,
@@ -136,6 +188,39 @@ export async function getPropertiesEnum(
     }
 
     
+    return responsedata;
+
+}
+
+
+export async function updatePropertyEnum(
+    clientId: string,
+    clientSecret: string,
+    instanceUrl: string,
+    label: string,
+    payload: PropertyEnumPayload,
+    token: string = ""
+): Promise<any[]> {
+    validatePropertyEnumPayload(payload);
+
+    let responsedata: any[] = [];
+
+    const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscMetadata/v1/properties/${label}/enumerationList`;
+
+    const res = await fetchPutWithRetry(
+        url,
+        clientId,
+        clientSecret,
+        instanceUrl,
+        token,
+        payload
+    );
+
+    token = res.token;
+    if (res.data.items) {
+        responsedata = res.data;
+    }
+
     return responsedata;
 
 }
