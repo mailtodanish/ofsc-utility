@@ -22,7 +22,7 @@ export { getApplictaionsIntegrationsDetailMetaData } from './applictaionsIntegra
 export { getCapacityMetaData } from './capacity';
 export { getFormsMetaData } from './form';
 export { getInventoryTypesMetaData } from './inventoryTypes';
-export { getPropertiesMetaData } from './properties';
+export { getPropertiesMetaData, getPropertyMetaData } from './properties';
 export { getResourceTypesMetaData } from './resourceTypes';
 export { getShiftMetaData } from './shifts';
 export { getTimeSlotsMetaData } from './timeSlots';

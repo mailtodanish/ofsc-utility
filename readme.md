@@ -1169,6 +1169,7 @@ The `metadata` object exposes metadata helpers such as:
 - `getFormsMetaData`
 - `getInventoryTypesMetaData`
 - `getPropertiesMetaData`
+- `getPropertyMetaData`
 - `getResourceTypesMetaData`
 - `getShiftMetaData`
 - `getTimeSlotsMetaData`
@@ -1199,6 +1200,63 @@ const propertiesSheet = await ofs.metadata.getPropertiesMetaData(
 console.log(propertiesSheet["Properties Overview"]);
 console.log(propertiesSheet["Properties Enumerations"]);
 ```
+
+### Single property metadata note
+
+The `getPropertyMetaData` helper fetches metadata for one property label. It requests that property directly from the OFSC metadata API rather than fetching the full property catalog.
+
+This function accepts:
+
+- `propertyLabel`: the property label to fetch, such as `work_zone` or `manager`
+- `clientId`: OFSC client ID
+- `clientSecret`: OFSC client secret
+- `instanceUrl`: OFSC instance name only, for example `mycompany`
+- `token`: optional existing OAuth token; omit it or pass an empty string to let the request helper obtain a token
+
+The returned promise resolves to an object with:
+
+- `data`: the raw metadata object for the requested property returned by the OFSC API
+- `enums`: the raw enumeration-list array for that property when its data type is `enumeration`; otherwise an empty array
+
+```js
+const propertyMetadata = await ofs.metadata.getPropertyMetaData(
+  "work_zone",
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+);
+
+console.log(propertyMetadata.data);
+console.log(propertyMetadata.enums);
+```
+
+Example return value (the property and enumeration fields depend on the OFSC instance):
+
+```js
+{
+  "data": {
+    "label": "work_zone",
+    "name": "workZone",
+    "type": "enumeration",
+    "entity": "resource",
+    "gui": "dropdown"
+  },
+  "enums": [
+    {
+      "label": "HOME",
+      "active": true,
+      "translations": [
+        {
+          "language": "en",
+          "name": "Home office"
+        }
+      ]
+    }
+  ]
+}
+```
+
+The example is illustrative; the exact fields in `data` and each item in `enums` are determined by the API response. For a non-enumeration property, `enums` is `[]`. An empty or whitespace-only `propertyLabel` throws an error.
 
 ## Notes
 

@@ -1,6 +1,11 @@
 import { fetchWithRetry } from "../utilities";
-import { getPropertiesDropDownMetaData } from "./enumerations";
+import { getPropertiesDropDownMetaData,getPropertiesEnum } from "./enumerations";
 type SheetData = Record<string, any[]>;
+
+/**
+ * Fetches all OFSC property metadata for an instance, paginates through the REST API,
+ * and returns the aggregated data transformed into spreadsheet-ready sheets.
+ */
 export async function getPropertiesMetaData(
     clientId: string, clientSecret: string, instanceUrl: string, allUsedPropes: any[], token: string = ""
 ): Promise<SheetData> {
@@ -36,8 +41,10 @@ export async function getPropertiesMetaData(
 
 }
 
-
-
+/**
+ * Transforms raw property metadata into two report sheets:
+ * an overview of all properties and a flattened enumeration dataset for dropdown-backed fields.
+ */
 export async function transformData(data: any[], allUsedPropes: any[], clientId: string, clientSecret: string, instanceUrl: string, token: string): Promise<SheetData> {
     const sheets: SheetData = {};
 
@@ -79,4 +86,37 @@ export async function transformData(data: any[], allUsedPropes: any[], clientId:
     }
     sheets['Properties Enumerations'] = dropDownData;
     return sheets;
+}
+
+
+export async function getPropertyMetaData(
+    propertyLabel: string,
+    clientId: string,
+    clientSecret: string,
+    instanceUrl: string,
+    token: string = ""
+): Promise<SheetData> {
+    const normalizedLabel = propertyLabel?.trim().toLowerCase();
+
+    if (!normalizedLabel) {
+        throw new Error("propertyLabel is required.");
+        }
+ 
+        const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscMetadata/v1/properties/${normalizedLabel}`;
+
+        const res = await fetchWithRetry(
+            url,
+            clientId,
+            clientSecret,
+            instanceUrl,
+            token
+        );
+
+        token = res.token;    
+    
+    return {
+        data: res.data,
+        enums: res.data.type=="enumeration"? await getPropertiesEnum(
+                clientId, clientSecret, instanceUrl, normalizedLabel, token) :[]
+    }
 }

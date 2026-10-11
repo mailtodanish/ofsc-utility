@@ -40,7 +40,7 @@ export { downloadAllEventsOfDay, downloadAllEventsOfDayCSV, downloadAllEventsOfD
 
 export { createExcelFile } from './utilities';
 
-export { createConfigurationFile } from './metadata';
+export { createConfigurationFile, getPropertiesMetaData, getPropertyMetaData } from './metadata';
 
 
 // Default export with all functionality
@@ -73,6 +73,7 @@ const OfscUtility = {
     getFormsMetaData: require('./metadata').getFormsMetaData,
     getInventoryTypesMetaData: require('./metadata').getInventoryTypesMetaData,
     getPropertiesMetaData: require('./metadata').getPropertiesMetaData,
+    getPropertyMetaData: require('./metadata').getPropertyMetaData,
     getResourceTypesMetaData: require('./metadata').getResourceTypesMetaData,
     getShiftMetaData: require('./metadata').getShiftMetaData,
     getTimeSlotsMetaData: require('./metadata').getTimeSlotsMetaData,

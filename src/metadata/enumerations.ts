@@ -96,3 +96,46 @@ export async function transformData(
 
     return overview;
 }
+
+
+
+export async function getPropertiesEnum(
+    clientId: string,
+    clientSecret: string,
+    instanceUrl: string,
+    label: string,
+    token: string = ""
+): Promise<any[]> {
+    let responsedata: any[] = [];
+    let offset = 0;
+    const limit = 100;
+
+    // Continue paging until the API indicates there are no more items.
+    while (true) {
+        const url = `https://${instanceUrl}.fs.ocs.oraclecloud.com/rest/ofscMetadata/v1/properties/${label}/enumerationList?offset=${offset}&limit=${limit}`;
+
+        const res = await fetchWithRetry(
+            url,
+            clientId,
+            clientSecret,
+            instanceUrl,
+            token
+        );
+
+        // Keep the latest token for subsequent requests.
+        token = res.token;
+        if (res.data.items) {
+            responsedata = [...responsedata, ...res.data.items];
+        }
+
+        // If the API indicates there are no more items, exit the loop.
+        if (!res.data.hasMore) break;
+
+        // Update the offset for the next page of results.
+        offset = res.data.offset + limit;
+    }
+
+    
+    return responsedata;
+
+}
