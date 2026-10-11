@@ -1170,6 +1170,7 @@ The `metadata` object exposes metadata helpers such as:
 - `getInventoryTypesMetaData`
 - `getPropertiesMetaData`
 - `getPropertyMetaData`
+- `updatePropertyEnum`
 - `getResourceTypesMetaData`
 - `getShiftMetaData`
 - `getTimeSlotsMetaData`
@@ -1257,6 +1258,63 @@ Example return value (the property and enumeration fields depend on the OFSC ins
 ```
 
 The example is illustrative; the exact fields in `data` and each item in `enums` are determined by the API response. For a non-enumeration property, `enums` is `[]`. An empty or whitespace-only `propertyLabel` throws an error.
+
+### Updating property enumeration values
+
+Use `updatePropertyEnum` to send an enumeration-list update for a property through the OFSC metadata API. It requires the property `label` and a `payload` containing an `items` array. Each item must include a string `label`, boolean `active`, and a `translations` array. Each translation must include string `language`, `name`, and `languageISO` fields. Multiple items and multiple translations per item are supported.
+
+```js
+const response = await ofs.metadata.updatePropertyEnum(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  "custom_status",
+  {
+    items: [
+      {
+        label: "DATABASE_CONNECTION_ERROR",
+        active: true,
+        translations: [
+          {
+            language: "en",
+            name: "Database Connection Error",
+            languageISO: "en-US",
+          },
+          {
+            language: "fr",
+            name: "Erreur de connexion à la base de données",
+            languageISO: "fr-FR",
+          },
+        ],
+      },
+      {
+        label: "SERVICE_UNAVAILABLE",
+        active: true,
+        translations: [
+          {
+            language: "en",
+            name: "Service Unavailable",
+            languageISO: "en-US",
+          },
+        ],
+      },
+    ],
+  },
+  process.env.TOKEN || "",
+);
+
+console.log(response);
+```
+
+The optional token follows the payload argument. Invalid payload shapes or field types throw an error before the API request is made.
+
+The repository includes `scripts/test-update-property-enum.js` for trying this helper with a JSON payload file. After building with `npm run build`, set `CLIENT_ID`, `CLIENT_SECRET`, `INSTANCE_URL`, `PROPERTY_LABEL`, and `ENUM_PAYLOAD_PATH`, then run:
+
+```bash
+node scripts/test-update-property-enum.js
+```
+
+The script prints a dry-run preview by default. Set `APPLY_ENUM_UPDATE=true` to send the update.
 
 ## Notes
 
