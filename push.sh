@@ -2,6 +2,11 @@
 #
 # push.sh - stage, commit (with an AI-generated message via local Ollama), and push.
 #
+# Ollama response handling:
+#   Some model responses contain literal newlines in the JSON "response" string,
+#   which strict JSON parsers reject. The script repairs that output and removes
+#   Markdown code fences so the resulting commit message is plain text.
+#
 # Usage:
 #   ./push.sh                     auto-generate commit message, push current branch
 #   ./push.sh -m "manual message" skip Ollama, use your own message
