@@ -1,17 +1,17 @@
+
 /**
- * Example script to generate the OFSC metadata configuration file using the `src/metadata` helpers.
+ * Generate the OFSC metadata configuration workbook.
  *
- * Environment variables:
- * - CLIENT_ID
- * - CLIENT_SECRET
- * - INSTANCE_URL (host portion, e.g. example-instance)
- * - OUTPUT_FILE_NAME (optional)
+ * From the repository root, compile the TypeScript sources and run:
+ * source scripts/.env
+ *   npx tsc
+ *   CLIENT_ID=yourClientId CLIENT_SECRET=yourClientSecret INSTANCE_URL=yourInstance node scripts/create-configuration-example.js
  *
- * compile + run:
- *   tsc && node dist/metadata/scripts/create-configuration-example.js
+ * Set OUTPUT_FILE_NAME to change the output path. The default is
+ * OFSC_CONFIGURATION_SHEET.xlsx.
  */
 
-import { createConfigurationFile } from "..";
+const { createConfigurationFile } = require("../dist/metadata");
 
 const clientId = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;

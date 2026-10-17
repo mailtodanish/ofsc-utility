@@ -13,6 +13,6 @@
     "resolveJsonModule": true,
     "emitDeclarationOnly": false
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "scripts/create-configuration-example.js"],
   "exclude": ["node_modules", "dist", "test"]
 }

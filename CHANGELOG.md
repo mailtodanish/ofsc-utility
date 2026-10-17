@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - version 1.0.46
 
 ### Added
+- add support for getting subscription metadata
 - add getPropertyMetaData function
 - add getAllScheduledActivities for OFSC activities and bump version to 1.0.56
 - add getAllNonScheduledActivities function

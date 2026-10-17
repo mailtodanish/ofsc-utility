@@ -16,6 +16,7 @@ import * as WorkSkills from "./workSkillConditions";
 import * as WorkZoneKey from "./workZoneKey";
 import * as WorkZone from "./workZones";
 import * as Enum from "./enumerations"
+import * as Subscriptions from "./subscriptions"
 
 export { getActivityTypesGroupsMetaData } from './activityTypeGroup';
 export { getActivityTypesMetaData } from './activityTypes';
@@ -30,7 +31,8 @@ export { getTimeSlotsMetaData } from './timeSlots';
 export { getWorkSkillsMetaData } from './workSkillConditions';
 export { getWorkZoneKeyMetaData } from './workZoneKey';
 export { getWorkZonesMetaData } from './workZones';
-export {updatePropertyEnum} from "./enumerations"
+export {updatePropertyEnum} from "./enumerations";
+export {getSubscriptionsMetaData} from "./subscriptions";
 
 export async function createConfigurationFile(
     clientId: string,
@@ -53,6 +55,7 @@ export async function createConfigurationFile(
     let sheetDataWorkSkillsConsitions = await WorkSkills.getWorkSkillsMetaData(clientId, clientSecret, instanceUrl);
     let sheetDataWorkZoneKey = await WorkZoneKey.getWorkZoneKeyMetaData(clientId, clientSecret, instanceUrl);
     let sheetDataWorkZones = await WorkZone.getWorkZonesMetaData(clientId, clientSecret, instanceUrl);
+    let sheetDataSubscription = await Subscriptions.getSubscriptionsMetaData(clientId, clientSecret, instanceUrl);
     let allUsedPropes = [
         ...sheetDataWorkZoneKey.props,
         ...sheetDataWorkSkillsConsitions.props,
@@ -75,7 +78,8 @@ export async function createConfigurationFile(
         sheetDataWorkSkillsConsitions.data,
         sheetDataWorkZoneKey.data,
         sheetDataWorkZones,
-        sheetDataProperties
+        sheetDataProperties,
+        sheetDataSubscription
     );
     createExcelFile(sheets, fileName);
 

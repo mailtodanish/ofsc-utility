@@ -67,6 +67,7 @@ const OfscUtility = {
   },
   
   metadata: {
+    getSubscriptionsMetaData:require('./metadata').getSubscriptionsMetaData,
     getActivityTypesMetaData: require('./metadata').getActivityTypesMetaData,
     getActivityTypesGroupsMetaData: require('./metadata').getActivityTypesGroupsMetaData,
     getApplictaionsIntegrationsDetailMetaData: require('./metadata').getApplictaionsIntegrationsDetailMetaData,

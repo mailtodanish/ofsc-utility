@@ -1081,6 +1081,9 @@ await ofs.createConfigurationFile(
 );
 ```
 
+The workbook includes a `Subscription Config` sheet with subscription IDs,
+serialized subscription configurations, and application IDs.
+
 ### Metadata helpers
 
 The `metadata` group exposes metadata-specific retrieval helpers.
@@ -1168,6 +1171,7 @@ The `metadata` object exposes metadata helpers such as:
 - `getCapacityMetaData`
 - `getFormsMetaData`
 - `getInventoryTypesMetaData`
+- `getSubscriptionsMetaData`
 - `getPropertiesMetaData`
 - `getPropertyMetaData`
 - `updatePropertyEnum`
@@ -1178,6 +1182,36 @@ The `metadata` object exposes metadata helpers such as:
 - `getWorkZoneKeyMetaData`
 - `getWorkZonesMetaData`
 - `createConfigurationFile`
+
+### Subscription metadata
+
+Use `getSubscriptionsMetaData` to retrieve the instance's event subscriptions.
+It returns an object with a `Subscription Config` array. Each row contains
+`subscriptionId`, `subscriptionConfig` (serialized as JSON), and `applicationId`.
+The optional fourth argument is an existing OAuth token; omit it or pass an
+empty string to let the request helper obtain a token.
+
+```js
+const subscriptions = await ofs.metadata.getSubscriptionsMetaData(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  process.env.INSTANCE_NAME,
+  process.env.TOKEN || "",
+);
+
+console.log(subscriptions["Subscription Config"]);
+```
+
+To try the method from the repository, build the package, load credentials from
+`scripts/.env`, and run the test script:
+
+```bash
+npm run build
+source scripts/.env
+node scripts/test-get-subscriptions-meta-data.js
+```
+
+Set `OUTPUT_FILE_NAME` to save the returned object as JSON.
 
 ### Properties metadata note
 

@@ -109,8 +109,8 @@ Rules:
   with a conventional commit type (feat/fix/chore/refactor/docs/test/etc).
 - Leave a blank line, then optional bullet points for notable details only
   if the diff is non-trivial.
-- Do not include the diff, code fences, or any explanation. Output ONLY the
-  commit message text.
+- Do not include Markdown, code fences, the diff, or any explanation. Output
+  ONLY the commit message text.
 
 Diff:
 $DIFF
@@ -137,19 +137,63 @@ print(json.dumps({"model": model, "prompt": prompt, "stream": False}))
     echo "Warning: Ollama request failed (is it running at $OLLAMA_HOST?). Falling back to manual input." >&2
     read -r -p "Enter commit message: " COMMIT_MSG
   else
+    COMMIT_MSG=""
     if command -v jq >/dev/null 2>&1; then
-      COMMIT_MSG=$(echo "$RESPONSE" | jq -r '.response' 2>/dev/null | sed '/^\s*$/d') || true
-    else
-      COMMIT_MSG=$(python3 -c '
-import json, sys
-data = json.loads(sys.stdin.read())
-print(data.get("response", "").strip())
-' <<< "$RESPONSE" 2>/dev/null) || true
+      COMMIT_MSG=$(printf '%s' "$RESPONSE" | jq -r '.response // empty' 2>/dev/null) || true
     fi
 
     if [[ -z "$COMMIT_MSG" ]]; then
-      echo "Warning: could not parse a response from Ollama. Raw output was:" >&2
-      echo "$RESPONSE" >&2
+      COMMIT_MSG=$(python3 -c '
+import json, sys
+
+def escape_unescaped_controls(text):
+    result = []
+    in_string = False
+    escaped = False
+
+    for char in text:
+        if in_string:
+            if escaped:
+                result.append(char)
+                escaped = False
+            elif char == "\\":
+                result.append(char)
+                escaped = True
+            elif char == "\"":
+                result.append(char)
+                in_string = False
+            elif ord(char) < 0x20:
+                result.append(json.dumps(char)[1:-1])
+            else:
+                result.append(char)
+        else:
+            result.append(char)
+            if char == "\"":
+                in_string = True
+
+    return "".join(result)
+
+raw = sys.stdin.read()
+try:
+    data = json.loads(raw)
+except json.JSONDecodeError as error:
+    try:
+        data = json.loads(escape_unescaped_controls(raw))
+    except json.JSONDecodeError as repaired_error:
+        sys.exit(f"Could not parse Ollama response JSON: {repaired_error}")
+
+message = data.get("response") if isinstance(data, dict) else None
+if not isinstance(message, str):
+    sys.exit("Ollama response does not contain a string message.")
+print(message)
+' <<< "$RESPONSE") || true
+    fi
+
+    # Models may wrap the message in Markdown fences despite the prompt.
+    COMMIT_MSG=$(printf '%s\n' "$COMMIT_MSG" | sed '/^[[:space:]]*```[^`]*[[:space:]]*$/d')
+
+    if [[ -z "$COMMIT_MSG" ]]; then
+      echo "Warning: could not parse a commit message from Ollama. Falling back to manual input." >&2
       read -r -p "Enter commit message: " COMMIT_MSG
     fi
   fi

@@ -708,7 +708,20 @@ export function createExcelFile(
       Create data sheets
      ============================ */
   Object.entries(sheetsData).forEach(([sheetName, data]) => {
-    const worksheet = XLSX.utils.json_to_sheet(data);
+    const worksheet = XLSX.utils.aoa_to_sheet([['Back to INDEX']]);
+    XLSX.utils.sheet_add_json(worksheet, data, { origin: 'A2' });
+
+    const indexLinkCell = worksheet['A1'];
+    indexLinkCell.l = {
+      Target: "#'INDEX'!A1",
+      Tooltip: 'Go to INDEX'
+    };
+    indexLinkCell.s = {
+      font: {
+        color: { rgb: 'FF0563C1' },
+        underline: true
+      }
+    };
 
     if (data.length > 0) {
       const keys = Object.keys(data[0]);
@@ -724,7 +737,7 @@ export function createExcelFile(
 
       // Highlight header row
       keys.forEach((_, colIndex) => {
-        const addr = XLSX.utils.encode_cell({ r: 0, c: colIndex });
+        const addr = XLSX.utils.encode_cell({ r: 1, c: colIndex });
         const cell = worksheet[addr];
         if (!cell) return;
 
@@ -743,7 +756,7 @@ export function createExcelFile(
 
         keys.forEach((key, colIndex) => {
           const addr = XLSX.utils.encode_cell({
-            r: rowIndex + 1,
+            r: rowIndex + 2,
             c: colIndex
           });
 
